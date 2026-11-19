@@ -23,3 +23,8 @@ test('only invitation and recovery proofs are accepted; no custom login or arbit
  assert.ok(passwordEmailSchema.safeParse({email:'a@example.com',intent:'setup'}).success);
  assert.ok(!passwordEmailSchema.safeParse({email:'a@example.com',intent:'invite',role:'admin'}).success);
 });
+
+test('retired OTP endpoints cannot create sessions and guide stale tabs to password login',async()=>{
+ const endpoints=[await import('../src/app/api/auth/request/route'),await import('../src/app/api/auth/verify/route')];
+ for(const endpoint of endpoints){const response=endpoint.POST();assert.equal(response.status,410);assert.equal(response.headers.get('set-cookie'),null);assert.match(response.headers.get('cache-control')??'',/no-store/);assert.match((await response.json()).error,/password/);}
+});

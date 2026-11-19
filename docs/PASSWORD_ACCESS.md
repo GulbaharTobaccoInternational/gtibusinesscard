@@ -16,7 +16,7 @@ Public setup/recovery requests have the same confirmation and shared quotas for 
 
 ## Safe rollout
 
-First publish the setup/recovery routes and password sign-in at `/sign-in` alongside the current production OTP login. Verify the administrator can set a password and sign in before replacing the ordinary `/login` screen. After administrator verification, make password sign-in the normal login and retire application OTP request/verify routes. Existing authorized sessions retain their existing roles and company access.
+First publish the setup/recovery routes and password sign-in at `/sign-in` alongside the current production OTP login. Verify password creation and sign-in with disposable administrator accounts, and confirm the original administrator can reach their own secure setup and management screens before replacing the ordinary `/login` screen. The final release uses password sign-in at `/login`, with a safe `/sign-in` alias and HTTP 410 retirement responses for old OTP tabs. The initial administrator’s original identity, both-company permissions, official recovery session, setup page and management access were verified without choosing or changing a password. Password creation and subsequent password sign-in were tested on disposable administrator accounts. The real administrator chooses their password privately; first-time self-service setup remains available whenever they return. Existing authorized sessions retain their existing roles and company access.
 
 No credentials are rotated. Runtime continues using only the already configured application credentials; Supabase/Vercel management tokens and database passwords remain operator-only.
 

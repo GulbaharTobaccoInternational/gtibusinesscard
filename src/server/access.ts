@@ -28,7 +28,7 @@ export async function pageUser(admin=false){
 }
 export function privateError(error:unknown){
   if(!(error instanceof RequestError))console.error('Protected request failed.');
-  return Response.json({error:error instanceof RequestError?error.message:'The request could not be completed. Please try again.'},{status:error instanceof RequestError?error.status:503,headers:PRIVATE_HEADERS});
+  return Response.json({error:error instanceof RequestError?error.message:'The request could not be completed. Please try again.'},{status:error instanceof RequestError?error.status:503,headers:{...PRIVATE_HEADERS,...(error instanceof RequestError&&error.status===429?{'Retry-After':'60'}:{})}});
 }
 export function requireSameOrigin(request:Request){
   const origin=request.headers.get('origin');

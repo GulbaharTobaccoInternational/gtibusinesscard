@@ -13,15 +13,17 @@ npm run check:assets
 npm run dev
 ```
 
-Copy `.env.example` to ignored `.env.local` and configure the existing Supabase project and server-only mail credentials. Apply the tracked Supabase migrations and provision approved users as described in [access operations](docs/ACCESS.md). Open http://127.0.0.1:3107 and sign in with an authorized email code. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
+Copy `.env.example` to ignored `.env.local` and configure the existing Supabase project and server-only mail credentials. Apply the tracked Supabase migrations and provision approved users as described in [access operations](docs/ACCESS.md). Open http://127.0.0.1:3107 and sign in with your approved work email and password. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
 
 The company selector offers only companies assigned to the signed-in user. Administrators always have both companies. Form values are isolated by company and retained in memory while switching. Refreshing clears all employee values; localStorage stores only the selected company ID. SessionStorage stores each company's export-side preference. No employee submissions are saved or sent to an external QR service.
 
 ## Mr Ghashi interface
 
-The workspace uses self-hosted Geist typography, the supplied mascot identity, a prominent preview canvas and a shared export workspace. On smaller screens the preview appears before the form, followed by export controls. Both company forms retain their existing session isolation.
+The workspace uses the newest supplied Mr Ghashi logo, larger shared interface typography, a prominent preview canvas and a shared export workspace. On smaller screens the preview appears before the form, followed by export controls. Both company forms retain their existing session isolation.
 
-Four illustrated appreciation reactions are permanently visible beneath the header. Each click starts a short, nonblocking confetti burst (disabled for reduced motion) and submits only a reaction/company/UUID to the validated feedback endpoint. Clicks show only confetti; no persistent selection or delivery message appears. Server-side Resend delivery uses the authenticated employee identity and targets `slavomir.kluziak@gulbahartobacco.com` and `vinu@gulbahartobacco.com`. See [feedback delivery operations](docs/FEEDBACK.md) and [UI asset provenance](docs/MR_GHASHI_BRAND_ASSETS.md).
+Four illustrated appreciation reactions sit within the right side of the branded header, beneath the fixed GTI ownership attribution. Each click starts a short, nonblocking confetti burst (disabled for reduced motion) and submits only a reaction/company/UUID to the validated feedback endpoint. Clicks show only confetti; no persistent selection or delivery message appears. Server-side Resend delivery uses the authenticated employee identity and targets `slavomir.kluziak@gulbahartobacco.com` and `vinu@gulbahartobacco.com`. See [feedback delivery operations](docs/FEEDBACK.md) and [UI asset provenance](docs/MR_GHASHI_BRAND_ASSETS.md).
+
+Existing users can choose **Create your password** on the sign-in page. Administrators invite approved new users and can resend setup instructions. Password setup, reset, invalid-link and unauthorized screens share the supplied split-screen design. See [password access and recovery](docs/PASSWORD_ACCESS.md) and [V3 artwork provenance](docs/V3_BRANDING.md).
 
 ## Cards and downloads
 
@@ -68,4 +70,4 @@ Tests cover both templates, original GTI scene/SVG/vCard digests, one/two-page p
 
 Source: [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Existing Vercel project `gtibc` deploys `main`; [open the application](https://www.mrghashi.com). This update preserves the project's existing access settings and uses the same font Secret. See [deployment instructions](docs/DEPLOYMENT.md).
 
-Supabase email OTP and a server-managed authorization directory protect the generator, exports and admin tools. See [access operations](docs/ACCESS.md). Employee API responses remain private and non-cacheable. A physical print proof and scan at 100% scale are still needed before bulk printing; software decoding cannot certify a particular printer, stock or camera.
+Supabase invitation-only email/password authentication and a server-managed authorization directory protect the generator, exports and admin tools. See [access operations](docs/ACCESS.md). Employee API responses remain private and non-cacheable. A physical print proof and scan at 100% scale are still needed before bulk printing; software decoding cannot certify a particular printer, stock or camera.

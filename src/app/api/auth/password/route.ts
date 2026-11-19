@@ -14,6 +14,6 @@ export async function POST(request:Request){
     const {error:logoutError}=await client.auth.signOut({scope:'global'});
     if(logoutError)console.error('Post-recovery session revocation request failed.');
     await clearAuthCookies();
-    return Response.json({ok:true,redirect:'/sign-in?password=updated'},{headers:PRIVATE_HEADERS});
+    return Response.json({ok:true,redirect:'/login?password=updated'},{headers:PRIVATE_HEADERS});
   }catch(error){return privateError(error);}
 }

@@ -39,7 +39,7 @@ export async function sendPasswordEmail(user:AuthorizedUser,intent:'setup'|'rese
   const result=pendingInvite
     ?await client.auth.admin.inviteUserByEmail(user.email,{redirectTo,data:{full_name:user.full_name}})
     :await (await sessionClient()).auth.resetPasswordForEmail(user.email,{redirectTo});
-  if(result.error){console.error('Password email request failed.',{code:result.error.code,status:result.error.status});throw new RequestError(503,'The email request could not be completed. Please try again shortly.');}
+  if(result.error){console.error('Password email request failed.',{code:result.error.code,status:result.error.status});if(result.error.status===429)throw new RequestError(429,'Please wait a minute before requesting another email.');throw new RequestError(503,'The email request could not be completed. Please try again shortly.');}
   const patch={setup_email_sent_at:new Date().toISOString(),...(pendingInvite?{invited_at:new Date().toISOString()}:{} )};
   const {error}=await client.from('authorized_users').update(patch).eq('id',user.id);
   if(error)console.error('Setup email status update failed.');
