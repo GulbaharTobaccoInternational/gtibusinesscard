@@ -193,3 +193,9 @@ Real Great Job notifications for each company were accepted by Resend, addressed
 Source/browser-chunk scans found no private runtime or management credential values. Before the user's later instruction, the Supabase runtime key was replaced/verified and the setup-shared key revoked. The user then postponed all further credential rotation and explicitly authorized release with current credentials; Resend/SMTP/Vercel credentials are unchanged. Management tokens and the database password are excluded from application runtime.
 
 Local evidence and private QA artifacts remain under ignored `output/verification/secure-access/`; sensitive cookies and temporary fixture records are removed after use. Deployment evidence is recorded separately after preview verification.
+
+### Vercel release verification
+
+Commit `8300187` built successfully in the existing `gtibc` project as protected preview `dpl_B7MitFhNMQwdmzn31WWvuvytvFhB`, then through `main` as production `dpl_d13A12F75rTgzFTBcTdnfGXij8Gt`. The preview was tested using a short-lived project OIDC session issued through the supplied Vercel credential; protection settings were not changed. Both the preview and `https://www.mrghashi.com` passed deployed OTP verification, Secure/HttpOnly sessions, anonymous denial, administrator access, both-company PDF/PNG/vCard/QR checks, desktop/mobile browser checks and logout. Temporary deployment QA accounts and cookie files were removed afterward.
+
+Only the required application environment entries were added to Preview/Production. The original font Secret, project/domain settings and existing SMTP/Resend/Vercel credentials were preserved. Applied SQL versions `202611190001` and `202611190002` are recorded in Supabase's migration history. The final logout follow-up checks the provider's returned error so an auth-service failure returns a retry response instead of reporting success. Final deployment results remain in the ignored verification artifacts.
