@@ -8,9 +8,14 @@ import { COMPANY_IDS, COMPANIES } from '../src/lib/company';
 import { DEMO_EMPLOYEES } from '../src/lib/demo';
 import { serializeVCard } from '../src/lib/vcard';
 const base=process.env.GULBAHAR_TEST_URL??'http://127.0.0.1:3107';
-const post=(route:string,body:unknown,origin=base)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify(body)});
+const cookieFile=process.env.GULBAHAR_TEST_COOKIE_FILE;
+if(!cookieFile)throw new Error('Provide GULBAHAR_TEST_COOKIE_FILE containing a private, authenticated QA cookie header.');
+const cookie=(await fs.readFile(cookieFile,'utf8')).trim();
+const post=(route:string,body:unknown,origin=base)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,Cookie:cookie},body:JSON.stringify(body)});
 await fs.mkdir('output/verification/companies',{recursive:true});
-const page=await fetch(base);assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
+assert.equal((await fetch(base,{redirect:'manual'})).status,307);
+assert.equal((await fetch(base+'/api/render',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,401);
+const page=await fetch(base,{headers:{Cookie:cookie}});assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
 assert.ok(html.includes('Love our digital upgrade?'));assert.ok(html.includes('Give GTI Marketing Team some credit!'));assert.ok(html.includes('Gulbahar Tobacco International'));
 for(const label of ['Applause','Great Job','Coffee Treat','Hats Off'])assert.ok(html.includes(`aria-label="${label}"`));
 for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
@@ -23,7 +28,8 @@ assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti)).status,200);
 assert.equal((await post('/api/render',{companyId:'unknown',employee:DEMO_EMPLOYEES.gti})).status,400);
 assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti,'https://unrelated.test')).status,403);
 for(const companyId of COMPANY_IDS){
- const feedback=await post('/api/feedback',{reactionId:'great-job',companyId,submissionId:crypto.randomUUID()});assert.equal(feedback.status,200);assert.deepEqual(await feedback.json(),{mode:'demo',sent:false});
+ // Smoke checks must not send appreciation email as a side effect.
+ const feedback=await post('/api/feedback',{reactionId:'invalid',companyId,submissionId:crypto.randomUUID()});assert.equal(feedback.status,400);
  const employee=DEMO_EMPLOYEES[companyId];
  const preview=await post('/api/render',{companyId,employee});assert.equal(preview.status,200);assert.match(preview.headers.get('Cache-Control')??'',/no-store/);const result=await preview.json();assert.equal(result.companyId,companyId);assert.ok(result.front.includes('<path'));assert.ok(!result.front.includes('<text'));assert.equal(result.qr.payload,serializeVCard(employee,companyId));
  assert.equal((await post('/api/export',{companyId,employee:{...employee,email:'invalid'},settings:{format:'print',sides:'both',dpi:600,acknowledgeQrWarning:true}})).status,422);

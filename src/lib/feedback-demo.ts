@@ -5,4 +5,3 @@ export const REACTIONS = [
   { id:'hats-off', label:'Hats Off' },
 ] as const;
 export type AppreciationReaction = typeof REACTIONS[number];
-export type FeedbackResult = {mode:'demo';sent:false}|{mode:'sent';sent:true};

@@ -188,17 +188,14 @@ button svg { flex:none; }
 .dialog-close { position:absolute; right:14px; top:14px; }
 .app-dialog h2 { font-size:1.75rem; line-height:1.2; letter-spacing:-.8px; font-weight:600; margin:16px 0 10px; }
 .appreciation-banner { position:relative; background:#fff; border-top:1px solid #f1f3f5; }
-.appreciation-inner { max-width:1376px; margin:auto; padding:10px 40px; display:grid; grid-template-columns:minmax(250px,1fr) auto; gap:0 32px; align-items:center; }
+.appreciation-inner { max-width:1376px; margin:auto; padding:10px 40px; display:flex; justify-content:space-between; gap:32px; align-items:center; }
 .appreciation-copy h2 { font-size:1.25rem; font-weight:600; letter-spacing:-.45px; line-height:1.3; margin:0 0 5px; }
 .appreciation-copy p { margin:0; color:var(--text); font-size:.875rem; line-height:1.5; }
-.reaction-grid { grid-column:2; grid-row:1/3; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:400px; }
+.reaction-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; width:400px; flex:none; }
 .reaction-button { border:0; border-radius:12px; background:transparent; color:var(--text); position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:5px 6px; min-width:0; font-size:var(--text-small); font-weight:500; line-height:1.4; }
 .reaction-button:hover:not(:disabled) { background:#fff7f0; transform:translateY(-2px); }
 .reaction-button:active:not(:disabled) { transform:scale(.96); }
-.reaction-button.is-selected { background:var(--brand-soft); color:var(--brand-dark); }
 .reaction-art { display:block; width:62px; aspect-ratio:1; overflow:hidden; margin-bottom:2px; }
-.reaction-check { position:absolute; top:5px; right:6px; color:var(--brand); }
-.appreciation-status { grid-column:1; grid-row:2; min-height:20px; margin:5px 0 0; color:#536457; font-size:var(--text-small); line-height:1.5; }
 .confetti-burst { position:absolute; left:0; right:0; top:0; height:230px; pointer-events:none; overflow:hidden; z-index:10; }
 .confetti-burst i { position:absolute; top:24px; left:50%; width:7px; height:11px; border-radius:1px; background:var(--confetti-color); animation:appreciation-confetti 1.35s var(--delay) cubic-bezier(.17,.65,.45,1) both; }
 @keyframes appreciation-confetti { 0% { opacity:0; transform:translate(0,-12px) rotate(0); } 10% { opacity:1; } 100% { opacity:0; transform:translate(var(--spread),var(--fall)) rotate(var(--spin)); } }
@@ -244,6 +241,39 @@ button svg { flex:none; }
   .header-inner { padding-left:24px; padding-right:24px; }.mr-ghashi-brand { width:240px; }.ownership-logo { width:54px; }.department-credit { max-width:240px; font-size:.8125rem; }.ownership-group { gap:12px; }.appreciation-inner { padding-left:24px; padding-right:24px; gap:0 20px; }.reaction-grid { width:348px; gap:8px; }.reaction-art { width:56px; }
 }
 @media(max-width:680px) {
-  .header-inner { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); min-height:0; padding:12px 16px; gap:14px; }.app-brand { min-width:0; }.mr-ghashi-brand { width:100%; max-width:160px; }.ownership-logo { width:30px; }.ownership-group { gap:8px; }.department-credit { max-width:none; font-size:.8125rem; line-height:1.4; }.appreciation-inner { grid-template-columns:1fr; padding:12px 16px 8px; gap:6px; }.appreciation-copy h2 { font-size:1.0625rem; margin-bottom:3px; }.appreciation-copy p { font-size:.8125rem; }.reaction-grid { grid-column:1; grid-row:auto; width:100%; gap:6px; }.reaction-art { width:48px; }.reaction-button { font-size:.8125rem; padding:5px 3px; }.appreciation-status { grid-column:1; grid-row:auto; margin:0; }.workspace-heading { margin-bottom:20px; }.workspace-actions .company-control>span { display:block; }.company-control { gap:5px; }.confetti-burst { height:210px; }
+  .header-inner { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); min-height:0; padding:12px 16px; gap:14px; }.app-brand { min-width:0; }.mr-ghashi-brand { width:100%; max-width:160px; }.ownership-logo { width:30px; }.ownership-group { gap:8px; }.department-credit { max-width:none; font-size:.8125rem; line-height:1.4; }.appreciation-inner { flex-direction:column; align-items:stretch; padding:12px 16px 8px; gap:6px; }.appreciation-copy h2 { font-size:1.0625rem; margin-bottom:3px; }.appreciation-copy p { font-size:.8125rem; }.reaction-grid { width:100%; gap:6px; }.reaction-art { width:48px; }.reaction-button { font-size:.8125rem; padding:5px 3px; }.workspace-heading { margin-bottom:20px; }.workspace-actions .company-control>span { display:block; }.company-control { gap:5px; }.confetti-burst { height:210px; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .confetti-burst { display:none; } *,*:before,*:after { transition:none!important; animation:none!important; } }
+
+/* Authentication and administration share the existing interface typography. */
+.session-bar { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:8px 20px; margin:0 0 18px; font-size:var(--text-small); color:var(--muted); }
+.session-name { color:var(--text); font-weight:500; }
+.session-actions { display:flex; align-items:center; gap:16px; }
+.session-actions a,.session-actions button { display:inline-flex; align-items:center; gap:6px; border:0; background:transparent; padding:4px 0; border-radius:4px; color:var(--muted); font-size:var(--text-small); }
+.session-actions a:hover,.session-actions button:hover { color:var(--brand-dark); }
+.login-page { min-height:100dvh; background:radial-gradient(ellipse at 12% 55%,#fff1df99,transparent 55%),var(--page); display:flex; flex-direction:column; }
+.login-header { max-width:1280px; width:100%; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:24px; padding:24px 40px; }
+.login-content { flex:1; display:grid; grid-template-columns:1fr 1fr; gap:60px; width:100%; max-width:1120px; align-items:center; padding:40px; margin:auto; }
+.login-welcome h2 { font-size:clamp(32px,3.8vw,50px); font-weight:600; letter-spacing:-1.8px; line-height:1.16; margin:16px 0; }
+.login-welcome>p { font-size:17px; line-height:1.7; color:var(--muted); margin:0; }
+.login-brand-scene { margin:28px 0 22px; padding:26px 20px; background:#fff; border:1px solid #f2eae5; border-radius:22px; width:min(100%,390px); box-shadow:0 18px 55px #6b402908; transform:rotate(-2deg); }
+.login-brand-scene .mr-ghashi-brand { width:100%; }
+.login-brands { display:flex; gap:15px; color:var(--muted); font-size:var(--text-label); font-weight:500; }
+.login-brands span { color:#c6adb2; }
+.login-card { background:#fff; border:1px solid var(--line); border-radius:24px; padding:38px; box-shadow:0 18px 70px #20263708; min-width:0; }
+.login-shield { display:grid; place-items:center; height:46px; width:46px; color:var(--brand); border-radius:14px; background:var(--brand-soft); margin-bottom:24px; }
+.login-card>.eyebrow { font-size:var(--text-small); letter-spacing:1.1px; }
+.login-card h1 { font-size:27px; line-height:1.25; letter-spacing:-.8px; font-weight:600; margin:10px 0 14px; }
+.login-description { color:var(--muted); font-size:var(--text-label); line-height:1.7; margin:0 0 26px; overflow-wrap:anywhere; }
+.login-description strong { color:var(--text); font-weight:500; }
+.login-input { position:relative; }.login-input>svg { position:absolute; top:14px; left:13px; color:#9097a3; pointer-events:none; }.login-input>input { padding-left:40px; }
+.login-card .field input { height:48px; font-size:1rem; }
+.login-card .otp-input { text-align:center; font-size:26px; font-variant-numeric:tabular-nums; letter-spacing:.4em; padding-left:calc(13px + .4em); }
+.login-submit { width:100%; margin-top:24px; min-height:48px; justify-content:center; }
+.login-security { display:flex; align-items:flex-start; gap:7px; color:var(--muted); font-size:var(--text-small); line-height:1.6; margin:20px 0 0; }.login-security svg { flex:none; margin-top:3px; }
+.login-error { padding:12px 14px; background:#fff4f6; color:var(--danger); border-radius:10px; margin-top:18px; font-size:var(--text-small); line-height:1.6; }.login-error strong { font-size:var(--text-label); }.login-error p { margin:0; }.login-error strong+p { margin-top:4px; }
+.login-secondary { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; margin-top:22px; }
+.login-footer { padding:24px; text-align:center; font-size:var(--text-small); color:var(--muted); }
+.admin-page { min-height:100dvh; }.admin-header { max-width:1280px; margin:auto; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px 40px; }.admin-main { max-width:1200px; margin:auto; padding:24px 40px 60px; }.admin-title { margin:24px 0 30px; }.admin-title h1 { font-size:32px; letter-spacing:-1px; font-weight:600; margin:8px 0; }.admin-title p { color:var(--muted); font-size:var(--text-label); margin:0; }.admin-directory { border:1px solid var(--line); background:#fff; border-radius:18px; overflow:hidden; }.admin-directory-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 24px; }.admin-directory-heading h2 { font-size:var(--text-heading); font-weight:600; margin:0; }.admin-directory-heading h2 span { font-size:var(--text-small); color:var(--muted); margin-left:8px; }.admin-directory .print-button { width:auto; padding:10px 16px; }.admin-table-scroll { position:relative; overflow-x:auto; }.admin-table { width:100%; border-collapse:collapse; text-align:left; font-size:var(--text-label); }.admin-table th { font-weight:500; color:var(--muted); background:#fafbfc; font-size:var(--text-small); }.admin-table th,.admin-table td { padding:16px 24px; border-top:1px solid var(--line); vertical-align:middle; }.admin-table td { white-space:nowrap; }.admin-table td:first-child strong { display:block; font-weight:500; }.admin-table td:first-child>span { display:block; font-size:var(--text-small); color:var(--muted); margin-top:3px; }.access-badge { display:inline-block; border-radius:6px; padding:3px 8px; font-size:var(--text-small); }.access-badge.active { background:#eaf6ee; color:#287452; }.access-badge.disabled { background:#f1f2f5; color:#6c7280; }.admin-user-dialog { max-width:510px; }.admin-user-dialog form { margin-top:24px; }.admin-companies { border:0; padding:0; margin:22px 0; }.admin-companies legend { font-size:var(--text-label); font-weight:500; margin-bottom:10px; }.admin-companies .check-label { display:inline-flex; margin-right:20px; }.admin-form-actions { display:flex; align-items:center; justify-content:flex-end; gap:24px; margin-top:24px; }.admin-form-actions .print-button { width:auto; padding:10px 20px; }.admin-notice { margin:0; padding:0 24px 18px; color:var(--success); font-size:var(--text-label); }
+@media(max-width:900px) { .login-content { gap:30px; padding:30px; }.login-header { padding:20px 30px; }.login-card { padding:28px; }.login-welcome h2 { font-size:36px; } }
+@media(max-width:680px) { .session-bar { justify-content:space-between; gap:6px 14px; margin-bottom:16px; }.session-name { max-width:100%; overflow-wrap:anywhere; }.session-actions { gap:12px; }.login-header { padding:18px 20px; align-items:center; gap:18px; }.login-header>.mr-ghashi-brand { width:145px; flex:none; }.login-header .department-credit { font-size:var(--text-small); }.login-header .ownership-logo { width:30px; }.login-content { display:block; max-width:480px; padding:28px 20px; }.login-welcome { display:none; }.login-card { padding:28px 24px; border-radius:20px; }.login-card h1 { font-size:26px; }.login-footer { padding:20px 16px; }.admin-header { padding:16px 20px; align-items:center; }.admin-header .mr-ghashi-brand { width:145px; }.admin-header .export-shortcut { white-space:normal; text-align:center; max-width:150px; }.admin-main { padding:18px 20px 40px; }.admin-title h1 { font-size:28px; }.admin-directory-heading { padding:18px; }.admin-directory-heading h2 { font-size:17px; }.admin-table th,.admin-table td { padding:14px 18px; }.admin-directory .print-button { font-size:13px; }.admin-notice { padding-left:18px; padding-right:18px; } }

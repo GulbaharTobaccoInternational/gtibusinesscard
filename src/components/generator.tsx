@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Check, ChevronDown, CircleHelp, Copy, Download, LoaderCircle, QrCode, RotateCcw, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { EMPTY_EMPLOYEE, type Employee, type Issue } from '@/lib/employee';
-import { COMPANY_IDS, getCompany, type CompanyId } from '@/lib/company';
+import { getCompany, type CompanyId } from '@/lib/company';
+import type { SessionUser } from '@/lib/access';
 import { DEMO_EMPLOYEES, isDemoEmployee } from '@/lib/demo';
 import type { PreviewResult } from '@/lib/renderer';
 import type { ExportSettings } from '@/lib/export';
@@ -13,20 +14,21 @@ import { CompanySwitcher } from './company-switcher';
 import { Appreciation } from './appreciation';
 import { AppDialog } from './dialog';
 import { ExportPanel } from './export-panel';
+import { SessionBar } from './session-bar';
 
-type Props={ initials:Record<CompanyId,PreviewResult>; brandSvgs:Record<CompanyId,string> };
+type Props={ initials:Partial<Record<CompanyId,PreviewResult>>; brandSvgs:Record<CompanyId,string>;user:SessionUser };
 type CompanyProps={initial:PreviewResult;companyId:CompanyId;initialEmployee:Employee;saveEmployee:(employee:Employee)=>void;onExportBusyChange:(busy:boolean)=>void};
-export default function Generator({initials,brandSvgs}:Props){
-  const [companyId,setCompanyId]=useState<CompanyId>('gti');
+export default function Generator({initials,brandSvgs,user}:Props){
+  const [companyId,setCompanyId]=useState<CompanyId>(user.allowed_companies[0]);
   const [exportBusy,setExportBusy]=useState(false);
   const [showHelp,setShowHelp]=useState(false);
   const [employees,setEmployees]=useState<Record<CompanyId,Employee>>(()=>({gti:{...EMPTY_EMPLOYEE},doubleLeaf:{...EMPTY_EMPLOYEE}}));
   useEffect(()=>{
-    const timer=setTimeout(()=>{try{const saved=localStorage.getItem('business-card-company');if(COMPANY_IDS.includes(saved as CompanyId))setCompanyId(saved as CompanyId);}catch{}},0);
+    const timer=setTimeout(()=>{try{const saved=localStorage.getItem('business-card-company');if(user.allowed_companies.includes(saved as CompanyId))setCompanyId(saved as CompanyId);}catch{}},0);
     return()=>clearTimeout(timer);
-  },[]);
+  },[user.allowed_companies]);
   const switchCompany=(id:CompanyId)=>{
-    if(!COMPANY_IDS.includes(id))return;
+    if(!user.allowed_companies.includes(id))return;
     setCompanyId(id);try{localStorage.setItem('business-card-company',id);}catch{}
   };
   const company=getCompany(companyId);
@@ -38,8 +40,9 @@ export default function Generator({initials,brandSvgs}:Props){
     </div></header>
     <Appreciation companyId={companyId}/>
     <main className="main-shell">
-      <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
-      <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} onExportBusyChange={setExportBusy}/>
+      <SessionBar user={user}/>
+      <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} allowedCompanies={user.allowed_companies} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
+      <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]!} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} onExportBusyChange={setExportBusy}/>
       <footer className="page-footer"><span>Mr Ghashi <span className="footer-divider">/</span> Your Biz Card Genius</span><span className="footer-note">Made for good introductions.</span><button type="button" className="text-button footer-help" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={14}/>Help &amp; print guide</button></footer>
     </main>
     {showHelp&&<AppDialog titleId="help-title" className="help-dialog" onClose={()=>setShowHelp(false)}><span className="eyebrow">A QUICK GUIDE</span><h2 id="help-title">A great card, in a few steps.</h2><ol><li><strong>Make it yours.</strong> Select your company and enter your employee details, or try the fictional sample.</li><li><strong>Check your card.</strong> Review both sides and scan the QR to confirm the digital contact.</li><li><strong>Choose your download.</strong> Select Front Only or Front + Back, then export.</li></ol><div className="help-note"><ShieldCheck size={20}/><p>For your printer, choose Print-Ready PDF. Your card is 92 × 57 mm with vector outlines and no extra bleed. Print at 100% scale.</p></div><p>Company details and approved templates are maintained by GTI Marketing. Unsupported characters and text that exceeds the approved layout are flagged before export.</p><button type="button" className="button print-button" onClick={()=>setShowHelp(false)}>Got it</button></AppDialog>}

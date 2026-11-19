@@ -13,15 +13,15 @@ npm run check:assets
 npm run dev
 ```
 
-Open http://127.0.0.1:3107. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
+Copy `.env.example` to ignored `.env.local` and configure the existing Supabase project and server-only mail credentials. Apply the tracked Supabase migrations and provision approved users as described in [access operations](docs/ACCESS.md). Open http://127.0.0.1:3107 and sign in with an authorized email code. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
 
-The header selector offers exactly the two supported companies. Form values are isolated by company and retained in memory while switching. Refreshing clears all employee values; localStorage stores only the selected company ID. SessionStorage stores each company's export-side preference. No employee submissions are saved or sent to an external QR service.
+The company selector offers only companies assigned to the signed-in user. Administrators always have both companies. Form values are isolated by company and retained in memory while switching. Refreshing clears all employee values; localStorage stores only the selected company ID. SessionStorage stores each company's export-side preference. No employee submissions are saved or sent to an external QR service.
 
 ## Mr Ghashi interface
 
 The workspace uses self-hosted Geist typography, the supplied mascot identity, a prominent preview canvas and a shared export workspace. On smaller screens the preview appears before the form, followed by export controls. Both company forms retain their existing session isolation.
 
-Four illustrated appreciation reactions are permanently visible beneath the header. Each click starts a short, nonblocking confetti burst (disabled for reduced motion) and submits only a reaction/company/UUID to the validated feedback endpoint. Email delivery remains inactive and the confirmation explicitly says no email has been sent. The future server-only transport targets `slavomir.kluziak@gulbahartobacco.com` and `vinu@gulbahartobacco.com`. See [feedback integration readiness](docs/FEEDBACK.md) and [UI asset provenance](docs/MR_GHASHI_BRAND_ASSETS.md).
+Four illustrated appreciation reactions are permanently visible beneath the header. Each click starts a short, nonblocking confetti burst (disabled for reduced motion) and submits only a reaction/company/UUID to the validated feedback endpoint. Clicks show only confetti; no persistent selection or delivery message appears. Server-side Resend delivery uses the authenticated employee identity and targets `slavomir.kluziak@gulbahartobacco.com` and `vinu@gulbahartobacco.com`. See [feedback delivery operations](docs/FEEDBACK.md) and [UI asset provenance](docs/MR_GHASHI_BRAND_ASSETS.md).
 
 ## Cards and downloads
 
@@ -57,7 +57,7 @@ npm run typecheck
 npm test
 npm run verify:exports
 npm run build
-GULBAHAR_TEST_URL=http://127.0.0.1:3107 npm run test:api
+GULBAHAR_TEST_URL=http://127.0.0.1:3107 GULBAHAR_TEST_COOKIE_FILE=/private/path/qa-cookie.txt npm run test:api
 ```
 
 For private source comparisons, install `requirements-qa.txt` in an isolated Python environment and run `scripts/compare-reference.py` after `verify:exports`. Set `GULBAHAR_REFERENCE_PDF` and `DOUBLE_LEAF_REFERENCE_PDF` if the original PDFs are stored elsewhere. The script transiently extracts original reference contact data solely to reproduce the reference typography; records are not hardcoded in application demos or tests. All comparison outputs stay in Git-ignored `output/` and must remain private. Fictional demo exports and QR payloads are also checked independently.
@@ -66,6 +66,6 @@ Tests cover both templates, original GTI scene/SVG/vCard digests, one/two-page p
 
 ## Deployment
 
-Source: [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Existing Vercel project `gtibc` deploys `main`; [open the application](https://gtibc-kappa.vercel.app). This update preserves the project's existing access settings and uses the same font Secret. See [deployment instructions](docs/DEPLOYMENT.md).
+Source: [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Existing Vercel project `gtibc` deploys `main`; [open the application](https://www.mrghashi.com). This update preserves the project's existing access settings and uses the same font Secret. See [deployment instructions](docs/DEPLOYMENT.md).
 
-No database or new authentication system is needed for this update. Employee API responses remain private and non-cacheable. A physical print proof and scan at 100% scale are still needed before bulk printing; software decoding cannot certify a particular printer, stock or camera.
+Supabase email OTP and a server-managed authorization directory protect the generator, exports and admin tools. See [access operations](docs/ACCESS.md). Employee API responses remain private and non-cacheable. A physical print proof and scan at 100% scale are still needed before bulk printing; software decoding cannot certify a particular printer, stock or camera.
