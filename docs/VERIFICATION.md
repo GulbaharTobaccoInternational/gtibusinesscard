@@ -112,3 +112,18 @@ Private machine-readable reports, overlays and reference reproductions remain un
 ### Remaining limits
 
 Double Leaf has no verified general office phone, so its configuration remains empty and no main-company number is added to its QR. A selected employee number can print normally. Physical proof scanning and Illustrator PDF open/re-save checks remain unperformed; use a 100%-scale print proof before a bulk run. Supplied fonts remain server-only and glyph coverage is enforced; unsupported scripts block export. This release retains the existing deployment audience and adds no authentication, database or unrelated features.
+
+## UI clarity and readability update — 19 November 2026
+
+Only the shared UI component and stylesheet changed. The company, template, renderer, QR/vCard and export modules are unchanged.
+
+- Renamed the expandable section to **Additional QR / vCard Details** and added the requested explanation. The existing printed-number selector now sits outside the optional section. All twelve employee inputs remain present once; numbers that can also be selected for printing no longer carry misleading QR-only labels. The fax fields retain their accurate QR-only labels.
+- Shared UI text roles now use 15 px body/input text, 14 px labels/buttons, 13 px helper/secondary text and 18 px section headings, with compact responsive adjustments. Mobile inputs use 16 px. The large page title and all outlined card typography remain unchanged.
+- Replaced the native company dropdown with GTI / Double Leaf radio buttons in one compact rounded segment. Active brand accents animate over 180 ms; reduced-motion preferences disable the animation. Arrow keys, Home/End and Enter/Space use the existing company switch callback. Only the selected radio is in the Tab sequence; focus follows the selected company across the existing keyed form remount.
+- Lint, strict TypeScript, all 40 existing tests and the production build passed. HTTP verification against the production-mode local server passed for both companies' previews, print/digital exports, PNG ZIPs and decoded QR payloads at 300/600 DPI.
+- Before/after comparisons confirm both companies' front/back preview SVGs, vCard payloads and 600 DPI card PNGs are byte-for-byte unchanged for the same demo records.
+- Chrome UI checks covered desktop, 768 px tablet, 390 px mobile and 320 px narrow mobile layouts. Header segments, longer labels, expanded helper copy, printed-number controls and mobile downloads were inspected without clipping or overlap. Text wraps within the available layout where needed.
+- Mouse and keyboard company switching restored isolated Alex/Jordan form values. Left/Right and Home/End preserved focus on the newly selected radio; Tab continued to Help rather than the inactive company.
+- In the browser, a supplied work phone and extension appeared as `TEL;TYPE=WORK,VOICE` in the Double Leaf vCard. Clearing them removed the optional property. Other blank optional telephone roles were omitted. A two-sided digital PDF was downloaded through the mobile interface.
+
+No new fields, business-card styling, dimensions, font outlines, artwork, QR placement, data mapping or export behavior were introduced.

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type CSSProperties, type RefObject } from 'react';
 import { ArrowDownToLine, ArrowRight, Check, ChevronDown, CircleHelp, Copy, FileImage, FileText, LockKeyhole, LoaderCircle, Minus, Plus, QrCode, RotateCcw, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { EMPTY_EMPLOYEE, type Employee, type Issue } from '@/lib/employee';
 import { COMPANIES, COMPANY_IDS, getCompany, type CompanyId } from '@/lib/company';
@@ -10,10 +10,11 @@ import type { PreviewResult } from '@/lib/renderer';
 import type { ExportSettings } from '@/lib/export';
 
 type Props={ initials:Record<CompanyId,PreviewResult>; brandSvgs:Record<CompanyId,string> };
-type CompanyProps={initial:PreviewResult;brandSvg:string;companyId:CompanyId;initialEmployee:Employee;saveEmployee:(employee:Employee)=>void;switchCompany:(id:CompanyId)=>void};
+type CompanyProps={initial:PreviewResult;brandSvg:string;companyId:CompanyId;initialEmployee:Employee;saveEmployee:(employee:Employee)=>void;switchCompany:(id:CompanyId)=>void;companySwitchFocusRef:RefObject<boolean>};
 function IconLabel({children,number}:{children:ReactNode;number:string}) {return <div className="section-title"><span className="section-number">{number}</span><h2>{children}</h2></div>;}
 export default function Generator({initials,brandSvgs}:Props){
   const [companyId,setCompanyId]=useState<CompanyId>('gti');
+  const companySwitchFocusRef=useRef(false);
   const [employees,setEmployees]=useState<Record<CompanyId,Employee>>(()=>({gti:{...EMPTY_EMPLOYEE},doubleLeaf:{...EMPTY_EMPLOYEE}}));
   useEffect(()=>{
     const timer=setTimeout(()=>{try{const saved=localStorage.getItem('business-card-company');if(COMPANY_IDS.includes(saved as CompanyId))setCompanyId(saved as CompanyId);}catch{}},0);
@@ -23,9 +24,9 @@ export default function Generator({initials,brandSvgs}:Props){
     if(!COMPANY_IDS.includes(id))return;
     setCompanyId(id);try{localStorage.setItem('business-card-company',id);}catch{}
   };
-  return <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]} brandSvg={brandSvgs[companyId]} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} switchCompany={switchCompany}/>;
+  return <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]} brandSvg={brandSvgs[companyId]} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} switchCompany={switchCompany} companySwitchFocusRef={companySwitchFocusRef}/>;
 }
-function CompanyGenerator({initial,brandSvg,companyId,initialEmployee,saveEmployee,switchCompany}:CompanyProps){
+function CompanyGenerator({initial,brandSvg,companyId,initialEmployee,saveEmployee,switchCompany,companySwitchFocusRef}:CompanyProps){
   const COMPANY=getCompany(companyId);
   const storageKey=`business-card-sides-${companyId}`;
   const [employee,setEmployee]=useState<Employee>({...initialEmployee});
@@ -49,6 +50,15 @@ function CompanyGenerator({initial,brandSvg,companyId,initialEmployee,saveEmploy
   const currentEmployee=useRef(employee);
   const controller=useRef<AbortController|null>(null);
   const previewEmployee=useRef('');
+  const selectedCompanyButton=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{
+    if(companySwitchFocusRef.current){selectedCompanyButton.current?.focus();companySwitchFocusRef.current=false;}
+  },[companyId,companySwitchFocusRef]);
+  const selectCompany=(id:CompanyId)=>{
+    if(busy||id===companyId)return;
+    companySwitchFocusRef.current=true;
+    switchCompany(id);
+  };
   useEffect(()=>{
     const saved=sessionStorage.getItem(storageKey)??(companyId==='gti'?sessionStorage.getItem('gulbahar-export-sides'):null);
     const timer=setTimeout(()=>{if(saved==='front'||saved==='both')setSides(saved);},0);
@@ -117,7 +127,11 @@ function CompanyGenerator({initial,brandSvg,companyId,initialEmployee,saveEmploy
   return <div className="company-surface" data-company={companyId} style={{'--red':COMPANY.accent,'--red-dark':COMPANY.accentDark,'--brand-soft':COMPANY.accentSoft} as CSSProperties}>
     <header className="topbar"><div className="header-inner">
       <Link className="brand" href="/" aria-label={`${COMPANY.shortName} Business Card Generator`}><span className="brand-art" dangerouslySetInnerHTML={{__html:brandSvg}}/><span className="brand-divider"/><span className="brand-tool">Brand studio<span>BUSINESS CARDS</span></span></Link>
-      <div className="header-right"><label className="company-switcher"><span>Company</span><select aria-label="Company" value={companyId} disabled={!!busy} onChange={event=>switchCompany(event.target.value as CompanyId)}>{COMPANY_IDS.map(id=><option key={id} value={id}>{COMPANIES[id].label}</option>)}</select></label><span className="internal-label"><LockKeyhole size={13}/> INTERNAL BRAND TOOL</span><button type="button" className="icon-button" aria-label="Help with business cards" onClick={()=>setShowHelp(true)}><CircleHelp size={19}/></button><span className="company-avatar" aria-hidden="true">{companyId==='gti'?'G':'DL'}</span></div>
+      <div className="header-right"><div className="company-switcher"><span id="company-switch-label">Company</span><div className="company-segments" role="radiogroup" aria-labelledby="company-switch-label" aria-disabled={!!busy} onKeyDown={event=>{
+        const index=COMPANY_IDS.indexOf(companyId);
+        const next=event.key==='Home'?COMPANY_IDS[0]:event.key==='End'?COMPANY_IDS[COMPANY_IDS.length-1]:['ArrowRight','ArrowDown'].includes(event.key)?COMPANY_IDS[(index+1)%COMPANY_IDS.length]:['ArrowLeft','ArrowUp'].includes(event.key)?COMPANY_IDS[(index-1+COMPANY_IDS.length)%COMPANY_IDS.length]:undefined;
+        if(next){event.preventDefault();selectCompany(next);}
+      }}>{COMPANY_IDS.map(id=><button key={id} type="button" role="radio" aria-checked={companyId===id} tabIndex={companyId===id?0:-1} title={COMPANIES[id].label} disabled={!!busy} ref={companyId===id?selectedCompanyButton:undefined} onClick={()=>selectCompany(id)}>{COMPANIES[id].shortName}</button>)}</div></div><span className="internal-label"><LockKeyhole size={13}/> INTERNAL BRAND TOOL</span><button type="button" className="icon-button" aria-label="Help with business cards" onClick={()=>setShowHelp(true)}><CircleHelp size={19}/></button><span className="company-avatar" aria-hidden="true">{companyId==='gti'?'G':'DL'}</span></div>
     </div></header>
     <main className="main-shell">
       <div className="page-heading"><div><div className="eyebrow">{COMPANY.organization.toUpperCase()}</div><h1>Business Card Generator<span className="red-period">.</span></h1><p>Your details. Our official design. Ready for your next introduction.</p></div><div className="demo-tools">{isDemoEmployee(employee,companyId)&&<span className="demo-badge">Demo data</span>}<button className="button button-secondary sample-button" onClick={loadSample}><Sparkles size={15}/> Use sample employee</button></div></div>
@@ -128,15 +142,18 @@ function CompanyGenerator({initial,brandSvg,companyId,initialEmployee,saveEmploy
             <section className="form-section"><IconLabel number="01">Employee Details</IconLabel><div className="field-grid">{field('firstName','First name',companyId==='gti'?'e.g. Alex':'e.g. Jordan',true)}{field('lastName','Last name',companyId==='gti'?'e.g. Morgan':'e.g. Taylor',true)}</div>{field('designation','Designation / job title',companyId==='gti'?'e.g. Marketing Manager':'e.g. Operations Coordinator',true)}{field('email','Work email',`you@${COMPANY.website.replace(/^www\./,'')}`,true,'email')}</section>
             <section className="form-section"><IconLabel number="02">Contact Information</IconLabel>{field('mobile','Employee mobile','+971 50 000 0000',false,'tel','Use your country code, including +.')}
               <div className="locked-company"><div><LockKeyhole size={13}/><span>Company telephone</span></div><strong>{COMPANY.telephone||'Not configured — employee number only'}</strong><span className="fixed-label">{COMPANY.telephone?'PRESET':'OPTIONAL'}</span></div>
-              <details className="advanced-details"><summary>Additional contact details <ChevronDown size={15}/></summary><div className="advanced-fields">{field('workPhone','Work phone / direct office','+971 4 000 0000',false,'tel')}{field('extension','Work phone extension','e.g. 105')}{field('companyMobile','Company-provided mobile','+971 50 000 0000',false,'tel')}{field('privatePhone','Private phone (QR only)','+971 50 000 0000',false,'tel')}{field('additionalPhone','Additional phone (QR only)','+971 50 000 0000',false,'tel')}{field('workFax','Work fax (QR only)','+971 4 000 0000',false,'tel')}{field('privateFax','Private fax (QR only)','+971 4 000 0000',false,'tel')}
-                <div className="field"><label htmlFor="primaryMobile">{companyId==='gti'?'Mobile number printed on card':'Phone number printed on card'}</label><select id="primaryMobile" name="primaryMobile" value={employee.primaryMobile} onChange={event=>update('primaryMobile',event.target.value as Employee['primaryMobile'])}><option value="mobile">Employee mobile</option><option value="companyMobile">Company-provided mobile</option><option value="privatePhone">Private phone</option><option value="additionalPhone">Additional phone</option>{companyId==='doubleLeaf'&&<option value="workPhone">Direct office / work phone</option>}<option value="none">No printed employee number</option></select>{fieldError('primaryMobile')&&<p className="field-error">{fieldError('primaryMobile')!.message}</p>}</div>
-                <p className="field-hint">{companyId==='gti'?'Only the selected mobile and company telephone are printed.':'Only the selected employee number is printed.'} Other numbers are saved in the QR contact.</p>
+                <div className="field printed-number-field"><label htmlFor="primaryMobile">{companyId==='gti'?'Mobile number printed on card':'Phone number printed on card'}</label><select id="primaryMobile" name="primaryMobile" value={employee.primaryMobile} onChange={event=>update('primaryMobile',event.target.value as Employee['primaryMobile'])}><option value="mobile">Employee mobile</option><option value="companyMobile">Company-provided mobile</option><option value="privatePhone">Private phone</option><option value="additionalPhone">Additional phone</option>{companyId==='doubleLeaf'&&<option value="workPhone">Direct office / work phone</option>}<option value="none">No printed employee number</option></select>{fieldError('primaryMobile')&&<p className="field-error">{fieldError('primaryMobile')!.message}</p>}</div>
+              <p className="field-hint">{companyId==='gti'?'Only the selected mobile and company telephone are printed.':'Only the selected employee number is printed.'} Other numbers are saved in the QR / vCard contact.</p>
+              <details className="advanced-details"><summary>Additional QR / vCard Details <ChevronDown size={15}/></summary>
+                <p className="field-hint advanced-description">Optional information to include when someone scans your business card&apos;s QR code. These details will be saved in the digital contact.</p>
+                <div className="advanced-fields">{field('workPhone','Work phone / direct office','+971 4 000 0000',false,'tel')}{field('extension','Work phone extension','e.g. 105')}{field('companyMobile','Company-provided mobile','+971 50 000 0000',false,'tel')}{field('privatePhone','Private phone','+971 50 000 0000',false,'tel')}{field('additionalPhone','Additional phone','+971 50 000 0000',false,'tel')}{field('workFax','Work fax (QR only)','+971 4 000 0000',false,'tel')}{field('privateFax','Private fax (QR only)','+971 4 000 0000',false,'tel')}
+                <p className="field-hint">These numbers are saved in the QR / vCard contact. A number also appears on the card if chosen in the printed-number selector above.</p>
               </div></details>
             </section>
             <section className="form-section qr-section"><div className="qr-section-heading"><IconLabel number="03">QR Code</IconLabel><label className="switch"><input type="checkbox" checked={employee.includeQr} onChange={event=>update('includeQr',event.target.checked)} aria-label="Include QR Code"/><span/></label></div><p className="section-description">Scan. Save. Stay connected.</p>
               {employee.includeQr?<><div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={{__html:preview.qr?.svg??''}}/><div><strong>Personalized contact card</strong><p>Your details, saved in one scan.</p><span className="tiny-badge"><span/> vCard 3.0 · Generated automatically</span></div></div>
                 {COMPANY.telephone&&<label className="check-label company-qr-check"><input type="checkbox" checked={employee.includeCompanyPhone} onChange={event=>update('includeCompanyPhone',event.target.checked)}/> Include company telephone in QR</label>}
-                <button className="text-button" type="button" onClick={()=>setShowPayload(!showPayload)}>{showPayload?'Hide':'View'} QR contact details <ArrowRight size={13}/></button>
+                <button className="text-button" type="button" onClick={()=>setShowPayload(!showPayload)}>{showPayload?'Hide':'View'} QR / vCard details <ArrowRight size={13}/></button>
                 {showPayload&&<div className="payload-panel"><pre>{preview.qr?.payload}</pre><button type="button" className="text-button" onClick={async()=>{try{await navigator.clipboard.writeText(preview.qr?.payload??'');setNotice('vCard details copied.');}catch{setNotice('Select and copy the contact details above.');}}}><Copy size={12}/> Copy vCard</button></div>}
               </>:<div className="qr-disabled"><QrCode size={20}/><p>QR code is off. The approved layout stays in place.</p></div>}
             </section>
