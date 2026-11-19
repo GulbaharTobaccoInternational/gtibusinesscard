@@ -36,9 +36,9 @@ export default function Generator({initials,brandSvgs,user}:Props){
     <a className="skip-link" href="#employee-details">Skip to employee details</a>
     <header className="app-header"><div className="header-inner">
       <Link className="app-brand" href="/" aria-label="Mr Ghashi — Your Biz Card Genius"><MrGhashiBrand/></Link>
-      <div className="header-right"><div className="ownership-group"><span className="ownership-logo" role="img" aria-label="Gulbahar Tobacco International" dangerouslySetInnerHTML={{__html:brandSvgs.gti}}/><p className="department-credit">An Internal Web Application by GTI Marketing Department</p></div></div>
+      <div className="ownership-group"><span className="ownership-logo" role="img" aria-label="Gulbahar Tobacco International" dangerouslySetInnerHTML={{__html:brandSvgs.gti}}/><p className="department-credit"><span>An Internal Web Application by </span><span>GTI Marketing Department</span></p></div>
+      <Appreciation companyId={companyId}/>
     </div></header>
-    <Appreciation companyId={companyId}/>
     <main className="main-shell">
       <SessionBar user={user}/>
       <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} allowedCompanies={user.allowed_companies} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>

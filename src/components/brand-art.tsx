@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 /** Supplied UI branding only. Never used by the business-card renderer. */
 export function MrGhashiBrand() {
-  return <span className="mr-ghashi-brand"><Image priority src="/brand/mr-ghashi-approved-logo.webp" alt="Mr Ghashi — Your Biz Card Genius" width={304} height={107} sizes="(max-width: 680px) 160px, 280px"/></span>;
+  return <span className="mr-ghashi-brand"><Image priority src="/brand/mr-ghashi-v3-logo.webp" alt="Mr Ghashi — Your Biz Card Genius" width={1600} height={709} sizes="(max-width: 680px) 240px, (max-width:1100px) 340px, 460px"/></span>;
 }
 export type ReactionArtId = 'applause' | 'great-job' | 'coffee-treat' | 'hats-off';
 export function ReactionArt({ id }: { id: ReactionArtId }) {

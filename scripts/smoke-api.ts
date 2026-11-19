@@ -15,7 +15,7 @@ const post=(route:string,body:unknown,origin=base)=>fetch(base+route,{method:'PO
 await fs.mkdir('output/verification/companies',{recursive:true});
 assert.equal((await fetch(base,{redirect:'manual'})).status,307);
 assert.equal((await fetch(base+'/api/render',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,401);
-const page=await fetch(base,{headers:{Cookie:cookie}});assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
+const page=await fetch(base,{headers:{Cookie:cookie}});assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.replace(/<[^>]*>/g,'').includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
 assert.ok(html.includes('Love our digital upgrade?'));assert.ok(html.includes('Give GTI Marketing Team some credit!'));assert.ok(html.includes('Gulbahar Tobacco International'));
 for(const label of ['Applause','Great Job','Coffee Treat','Hats Off'])assert.ok(html.includes(`aria-label="${label}"`));
 for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
