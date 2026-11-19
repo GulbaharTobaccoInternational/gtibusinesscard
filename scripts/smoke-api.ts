@@ -11,8 +11,9 @@ const base=process.env.GULBAHAR_TEST_URL??'http://127.0.0.1:3107';
 const post=(route:string,body:unknown,origin=base)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify(body)});
 await fs.mkdir('output/verification/companies',{recursive:true});
 const page=await fetch(base);assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
-assert.ok(html.includes('Official business card template'));
-for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
+assert.ok(html.includes('Love our digital upgrade?'));assert.ok(html.includes('Give GTI Marketing Team some credit!'));assert.ok(html.includes('Gulbahar Tobacco International'));
+for(const label of ['Applause','Great Job','Coffee Treat','Hats Off'])assert.ok(html.includes(`aria-label="${label}"`));
+for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
 assert.match(html,/<link[^>]+href="\/favicon\.ico\?[^" ]+"/);
 for(const [path,size] of [['/brand/favicon-16x16.png',16],['/brand/favicon-32x32.png',32],['/brand/apple-touch-icon.png',180]] as const){const icon=await fetch(base+path);assert.equal(icon.status,200);const metadata=await sharp(await icon.arrayBuffer()).metadata();assert.equal(metadata.width,size);assert.equal(metadata.height,size);assert.equal(metadata.hasAlpha,true);}
 assert.equal((await fetch(base+'/favicon.ico')).status,200);
@@ -22,6 +23,7 @@ assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti)).status,200);
 assert.equal((await post('/api/render',{companyId:'unknown',employee:DEMO_EMPLOYEES.gti})).status,400);
 assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti,'https://unrelated.test')).status,403);
 for(const companyId of COMPANY_IDS){
+ const feedback=await post('/api/feedback',{reactionId:'great-job',companyId,submissionId:crypto.randomUUID()});assert.equal(feedback.status,200);assert.deepEqual(await feedback.json(),{mode:'demo',sent:false});
  const employee=DEMO_EMPLOYEES[companyId];
  const preview=await post('/api/render',{companyId,employee});assert.equal(preview.status,200);assert.match(preview.headers.get('Cache-Control')??'',/no-store/);const result=await preview.json();assert.equal(result.companyId,companyId);assert.ok(result.front.includes('<path'));assert.ok(!result.front.includes('<text'));assert.equal(result.qr.payload,serializeVCard(employee,companyId));
  assert.equal((await post('/api/export',{companyId,employee:{...employee,email:'invalid'},settings:{format:'print',sides:'both',dpi:600,acknowledgeQrWarning:true}})).status,422);

@@ -21,7 +21,7 @@ The header selector offers exactly the two supported companies. Form values are 
 
 The workspace uses self-hosted Geist typography, the supplied mascot identity, a prominent preview canvas and a shared export workspace. On smaller screens the preview appears before the form, followed by export controls. Both company forms retain their existing session isolation.
 
-**Give credit** opens four illustrated appreciation choices. Selection creates a structured local demo payload and displays its reaction, intended recipient `MrGhashi@gulbahartobacco.com` and an explicit no-email-sent message. It has no network transport, email service, database, mailto link or persistent feedback storage. See [UI asset provenance and preparation prompts](docs/MR_GHASHI_BRAND_ASSETS.md).
+Four illustrated appreciation reactions are permanently visible beneath the header. Each click starts a short, nonblocking confetti burst (disabled for reduced motion) and submits only a reaction/company/UUID to the validated feedback endpoint. Email delivery remains inactive and the confirmation explicitly says no email has been sent. The future server-only transport targets `slavomir.kluziak@gulbahartobacco.com` and `vinu@gulbahartobacco.com`. See [feedback integration readiness](docs/FEEDBACK.md) and [UI asset provenance](docs/MR_GHASHI_BRAND_ASSETS.md).
 
 ## Cards and downloads
 

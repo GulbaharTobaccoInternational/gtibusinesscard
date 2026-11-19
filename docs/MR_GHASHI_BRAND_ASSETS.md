@@ -28,3 +28,9 @@ Use case: background-extraction. Edit target: the user's uploaded 'Give Credit t
 ## UI font
 
 Geist Sans is self-hosted from the font already bundled with the installed Next.js distribution. It is used exclusively for the interface. Its [SIL Open Font License](https://github.com/vercel/geist-font/blob/main/LICENSE.txt) is retained at `public/fonts/Geist-OFL.txt`. The five approved private card fonts and encrypted bundle are unchanged.
+
+## Approved header update — permanent reactions
+
+`public/brand/mr-ghashi-approved-logo.webp` replaces the earlier header wordmark. It is a direct pixel crop of the new logo in the supplied Illustrator mockup screenshot (`Screenshot 2026-11-19 at 4.57.07 PM.png`, 2220 × 230). The source rectangle is x=108, y=64, width=309, height=120; surrounding white pixels are trimmed and the result is encoded as lossless WebP, 304 × 107. No character generation, redraw or typography reconstruction was used. The separate `/Users/marketing/Downloads/Mr Ghashi Business Card Genius.png` path was unavailable on this host, so the mockup provides the available native raster resolution. The original aspect ratio and artwork are retained.
+
+The header ownership logo is the original GTI vector returned by `brandSvg('gti')`, independent of the active card company. The four existing reaction illustrations and mascot-face favicon are unchanged. The former header asset remains as an unreferenced source for the existing favicon; it is not displayed as the active wordmark.

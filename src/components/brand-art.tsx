@@ -1,9 +1,8 @@
 import Image from 'next/image';
 
-/** Reference-derived UI branding only. Never used by the business-card renderer. */
+/** Supplied UI branding only. Never used by the business-card renderer. */
 export function MrGhashiBrand() {
-  // Image preparation preserves the supplied mascot/wordmark composition.
-  return <span className="mr-ghashi-brand"><Image priority src="/brand/mr-ghashi-logo.png" alt="Mr Ghashi — Your Biz Card Genius" width={300} height={100} sizes="(max-width: 600px) 180px, 240px"/></span>;
+  return <span className="mr-ghashi-brand"><Image priority src="/brand/mr-ghashi-approved-logo.webp" alt="Mr Ghashi — Your Biz Card Genius" width={304} height={107} sizes="(max-width: 680px) 160px, 280px"/></span>;
 }
 export type ReactionArtId = 'applause' | 'great-job' | 'coffee-treat' | 'hats-off';
 export function ReactionArt({ id }: { id: ReactionArtId }) {

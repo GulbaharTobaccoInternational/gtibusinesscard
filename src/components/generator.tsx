@@ -34,10 +34,11 @@ export default function Generator({initials,brandSvgs}:Props){
     <a className="skip-link" href="#employee-details">Skip to employee details</a>
     <header className="app-header"><div className="header-inner">
       <Link className="app-brand" href="/" aria-label="Mr Ghashi — Your Biz Card Genius"><MrGhashiBrand/></Link>
-      <div className="header-right"><p className="department-credit">An Internal Web Application by GTI Marketing Department</p><Appreciation companyId={companyId}/><button type="button" className="icon-button help-trigger" aria-label="Help with business cards" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={20}/></button></div>
+      <div className="header-right"><div className="ownership-group"><span className="ownership-logo" role="img" aria-label="Gulbahar Tobacco International" dangerouslySetInnerHTML={{__html:brandSvgs.gti}}/><p className="department-credit">An Internal Web Application by GTI Marketing Department</p></div></div>
     </div></header>
+    <Appreciation companyId={companyId}/>
     <main className="main-shell">
-      <div className="workspace-heading"><div className="company-identity"><span className="company-logo" dangerouslySetInnerHTML={{__html:brandSvgs[companyId]}}/><span>{company.organization}</span><span className="official-label"><ShieldCheck size={13}/> Official business card template</span></div><div className="workspace-actions"><CompanySwitcher companyId={companyId} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
+      <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
       <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} onExportBusyChange={setExportBusy}/>
       <footer className="page-footer"><span>Mr Ghashi <span className="footer-divider">/</span> Your Biz Card Genius</span><span className="footer-note">Made for good introductions.</span><button type="button" className="text-button footer-help" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={14}/>Help &amp; print guide</button></footer>
     </main>
