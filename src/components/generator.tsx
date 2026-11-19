@@ -95,7 +95,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
   const touch=(field:string)=>setTouched(old=>new Set(old).add(field));
   const visible=(issue:Issue)=>submitted||touched.has(issue.field)||issue.field==='qr'||issue.field==='assets';
   // The form always prints Employee mobile. Keep legacy API phone selection out of the UI.
-  const formIssues=preview.issues.filter(issue=>issue.field!=='primaryMobile');
+  const formIssues=preview.issues.filter(issue=>issue.field!=='primaryMobile').map(issue=>issue.code==='overflow-mobile'?{...issue,message:'The printed phone line is too long. Remove unnecessary spaces or punctuation from Employee mobile.'}:issue);
   if(!employee.mobile.trim())formIssues.push({field:'mobile',message:'Employee mobile is required.',severity:'error',code:'required-mobile'});
   const fieldError=(field:keyof Employee)=>formIssues.find(i=>i.field===field&&i.severity==='error'&&visible(i));
   const errors=formIssues.filter(i=>i.severity==='error');
