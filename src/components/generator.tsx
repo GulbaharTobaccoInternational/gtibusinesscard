@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { Check, ChevronDown, CircleHelp, Copy, Download, LockKeyhole, LoaderCircle, Minus, Plus, QrCode, RotateCcw, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { Check, ChevronDown, CircleHelp, Copy, Download, LoaderCircle, QrCode, RotateCcw, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { EMPTY_EMPLOYEE, type Employee, type Issue } from '@/lib/employee';
 import { COMPANY_IDS, getCompany, type CompanyId } from '@/lib/company';
 import { DEMO_EMPLOYEES, isDemoEmployee } from '@/lib/demo';
@@ -37,7 +37,7 @@ export default function Generator({initials,brandSvgs}:Props){
       <div className="header-right"><p className="department-credit">An Internal Web Application by GTI Marketing Department</p><Appreciation companyId={companyId}/><button type="button" className="icon-button help-trigger" aria-label="Help with business cards" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={20}/></button></div>
     </div></header>
     <main className="main-shell">
-      <div className="workspace-heading"><div><h1>Your next introduction.</h1><div className="company-identity"><span className="company-logo" dangerouslySetInnerHTML={{__html:brandSvgs[companyId]}}/><span>{company.organization}</span><span className="official-label"><ShieldCheck size={13}/> Official template</span></div></div><div className="workspace-actions"><CompanySwitcher companyId={companyId} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
+      <div className="workspace-heading"><div className="company-identity"><span className="company-logo" dangerouslySetInnerHTML={{__html:brandSvgs[companyId]}}/><span>{company.organization}</span><span className="official-label"><ShieldCheck size={13}/> Official business card template</span></div><div className="workspace-actions"><CompanySwitcher companyId={companyId} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
       <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]} initialEmployee={employees[companyId]} saveEmployee={next=>setEmployees(previous=>({...previous,[companyId]:next}))} onExportBusyChange={setExportBusy}/>
       <footer className="page-footer"><span>Mr Ghashi <span className="footer-divider">/</span> Your Biz Card Genius</span><span className="footer-note">Made for good introductions.</span><button type="button" className="text-button footer-help" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={14}/>Help &amp; print guide</button></footer>
     </main>
@@ -47,10 +47,9 @@ export default function Generator({initials,brandSvgs}:Props){
 function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExportBusyChange}:CompanyProps){
   const COMPANY=getCompany(companyId);
   const storageKey=`business-card-sides-${companyId}`;
-  const [employee,setEmployee]=useState<Employee>({...initialEmployee});
+  const [employee,setEmployee]=useState<Employee>({...initialEmployee,primaryMobile:'mobile'});
   const [preview,setPreview]=useState(initial);
   const [side,setSide]=useState<'front'|'back'>('front');
-  const [zoom,setZoom]=useState(100);
   const [sides,setSides]=useState<'front'|'both'>('both');
   const [dpi,setDpi]=useState<300|600>(600);
   const [busy,setBusy]=useState<ExportSettings['format']|null>(null);
@@ -95,11 +94,14 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
   };
   const touch=(field:string)=>setTouched(old=>new Set(old).add(field));
   const visible=(issue:Issue)=>submitted||touched.has(issue.field)||issue.field==='qr'||issue.field==='assets';
-  const fieldError=(field:keyof Employee)=>preview.issues.find(i=>i.field===field&&i.severity==='error'&&visible(i));
-  const errors=preview.issues.filter(i=>i.severity==='error');
+  // The form always prints Employee mobile. Keep legacy API phone selection out of the UI.
+  const formIssues=preview.issues.filter(issue=>issue.field!=='primaryMobile');
+  if(!employee.mobile.trim())formIssues.push({field:'mobile',message:'Employee mobile is required.',severity:'error',code:'required-mobile'});
+  const fieldError=(field:keyof Employee)=>formIssues.find(i=>i.field===field&&i.severity==='error'&&visible(i));
+  const errors=formIssues.filter(i=>i.severity==='error');
   const warnings=preview.issues.filter(i=>i.severity==='warning');
   const densityWarning=warnings.find(i=>i.code==='qr-density');
-  const complete=['firstName','lastName','designation','email'].filter(key=>employee[key as keyof Employee]).length;
+  const complete=['firstName','lastName','designation','email','mobile'].filter(key=>String(employee[key as keyof Employee]).trim()).length;
   const ready=errors.length===0&&!updating&&!renderError;
   const field=(key:keyof Employee,label:string,placeholder:string,required=false,type='text',hint?:string)=>(
     <div className={`field ${fieldError(key)?'has-error':''}`}>
@@ -143,14 +145,12 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
           {field('email','Work email',`you@${COMPANY.website.replace(/^www\./,'')}`,true,'email')}
         </section>
         <section className="form-section contact-section"><h3>Contact information</h3>
-          {field('mobile','Employee mobile','+971 50 000 0000',false,'tel','Include country code, e.g. +971.')}
-          <div className="preset-company"><LockKeyhole size={14}/><div><span>Company telephone</span><strong>{COMPANY.telephone||'Not configured'}</strong></div><span className="preset-tag">{COMPANY.telephone?'Preset':'Optional'}</span></div>
-          <div className="field printed-number-field"><label htmlFor="primaryMobile">Number printed on card</label><div className="select-wrap"><select id="primaryMobile" name="primaryMobile" value={employee.primaryMobile} onChange={event=>update('primaryMobile',event.target.value as Employee['primaryMobile'])}><option value="mobile">Employee mobile</option><option value="companyMobile">Company-provided mobile</option><option value="privatePhone">Private phone</option><option value="additionalPhone">Additional phone</option>{companyId==='doubleLeaf'&&<option value="workPhone">Direct office / work phone</option>}<option value="none">No printed employee number</option></select><ChevronDown size={16}/></div>{fieldError('primaryMobile')&&<p className="field-error">{fieldError('primaryMobile')!.message}</p>}<p className="field-hint">{companyId==='gti'?'The selected mobile and company telephone are printed.':'Only the selected employee number is printed.'} Other numbers stay in your digital contact.</p></div>
+          {field('mobile','Employee mobile','+971 50 000 0000',true,'tel','Include country code, e.g. +971.')}
         </section>
         <details className="advanced-details"><summary><span>Additional QR / vCard Details<small>Optional information included when someone scans your business card&apos;s QR code.</small></span><ChevronDown size={17}/></summary><div className="advanced-fields">
           <div className="office-fields">{field('workPhone','Work phone / direct office','+971 4 000 0000',false,'tel')}{field('extension','Extension','105')}</div>
           {field('companyMobile','Company-provided mobile','+971 50 000 0000',false,'tel')}{field('privatePhone','Private phone','+971 50 000 0000',false,'tel')}{field('additionalPhone','Additional phone','+971 50 000 0000',false,'tel')}{field('workFax','Work fax (QR only)','+971 4 000 0000',false,'tel')}{field('privateFax','Private fax (QR only)','+971 4 000 0000',false,'tel')}
-          <p className="field-hint">These numbers are saved in the digital contact. A number also prints if chosen in the printed-number selector above.</p>
+          <p className="field-hint">These additional numbers are saved in the digital contact.</p>
         </div></details>
         <section className="qr-settings" aria-label="QR Code"><div className="qr-settings-heading"><h3>Digital contact</h3><label className="switch"><input type="checkbox" checked={employee.includeQr} onChange={event=>update('includeQr',event.target.checked)} aria-label="Include QR Code"/><span/></label></div>
           {employee.includeQr?<><div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={{__html:preview.qr?.svg??''}}/><div><strong>One scan. All your details.</strong><p>A contact that is ready to save.</p><span className="vcard-label">vCard 3.0</span></div></div>
@@ -160,15 +160,14 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
           </>:<div className="qr-disabled"><QrCode size={22}/><p>QR code is off. Your card keeps its approved layout.</p></div>}
         </section>
       </form>
-      <div className="privacy-note"><LockKeyhole size={14}/><p>Your details stay in this session.<br/>No saved submissions. No external QR services.</p></div>
     </aside>
     <div className="preview-column">
       <section className="preview-panel" aria-label="Card Preview">
         <div className="preview-toolbar"><h2>Live preview</h2><div className="side-tabs" role="tablist" aria-label="Preview side">{(['front','back'] as const).map(value=><button key={value} type="button" role="tab" id={`preview-${value}-tab`} aria-controls="preview-artwork" aria-selected={side===value} tabIndex={side===value?0:-1} onClick={()=>setSide(value)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?'front':event.key==='End'?'back':side==='front'?'back':'front';setSide(next);document.getElementById(`preview-${next}-tab`)?.focus();}}}>{value==='front'?'Front':'Back'}</button>)}</div></div>
-        <div className="preview-stage"><div className="card-viewport"><div className="card-scale" style={{width:`${zoom}%`}}><div className="business-card" data-testid="business-card" id="preview-artwork" role="tabpanel" aria-labelledby={`preview-${side}-tab`} dangerouslySetInnerHTML={{__html:side==='front'?preview.front:preview.back}}/></div></div>
-          <div className="canvas-toolbar"><span>{side==='front'?'Personalized front':'Official reverse'} <span className="canvas-dimension">92 × 57 mm</span></span><div className="zoom-controls"><button type="button" onClick={()=>setZoom(z=>Math.max(70,z-10))} disabled={zoom===70} aria-label="Zoom out"><Minus size={13}/></button><span>{zoom}%</span><button type="button" onClick={()=>setZoom(z=>Math.min(150,z+10))} disabled={zoom===150} aria-label="Zoom in"><Plus size={13}/></button></div></div>
+        <div className="preview-stage"><div className="card-viewport"><div className="business-card" data-testid="business-card" id="preview-artwork" role="tabpanel" aria-labelledby={`preview-${side}-tab`} dangerouslySetInnerHTML={{__html:side==='front'?preview.front:preview.back}}/></div>
+          <div className="canvas-toolbar"><span>{side==='front'?'Personalized front':'Official reverse'} <span className="canvas-dimension">92 × 57 mm</span></span></div>
         </div>
-        <div className="preview-status" aria-live="polite"><span className={ready?'status-ready':renderError?'status-error':'status-neutral'}>{updating?<LoaderCircle size={14} className="spinner"/>:ready?<Check size={14}/>:renderError?<X size={14}/>:null}{updating?'Updating your card…':renderError?'Preview unavailable':ready?'Your card is ready to export':`Add your details · ${complete} of 4 required fields`}</span><button type="button" className="text-button" onClick={()=>setShowMobile(!showMobile)}><QrCode size={14}/>{showMobile?'Close QR view':'Test your QR'}</button></div>
+        <div className="preview-status" aria-live="polite"><span className={ready?'status-ready':renderError?'status-error':'status-neutral'}>{updating?<LoaderCircle size={14} className="spinner"/>:ready?<Check size={14}/>:renderError?<X size={14}/>:null}{updating?'Updating your card…':renderError?'Preview unavailable':ready?'Your card is ready to export':`Add your details · ${complete} of 5 required fields`}</span><button type="button" className="text-button" onClick={()=>setShowMobile(!showMobile)}><QrCode size={14}/>{showMobile?'Close QR view':'Test your QR'}</button></div>
         {renderError&&<p role="alert" className="inline-error">{renderError}</p>}
         {showMobile&&<div className="scan-panel">{employee.includeQr&&preview.qr?<><div dangerouslySetInnerHTML={{__html:preview.qr.svg}}/><p>Scan to check your contact.<span>This enlarged view checks the data. Scan a printed proof at final size before ordering.</span></p></>:<p>Enable “Include QR Code” to generate a contact QR.</p>}</div>}
       </section>

@@ -11,6 +11,12 @@ The supplied concepts were visible as inline reference images; the referenced `/
 
 Both assets were produced with the built-in image tool, not a CLI/API fallback. The original generated files remain unchanged in the local generated-images folder. No complete promotional poster is displayed in the workspace.
 
+## Favicon extraction — final UI cleanup
+
+The favicon is a direct pixel crop of the existing header asset, with no regeneration or character redesign. The source rectangle is x=78, y=0, width=670, height=724. Its transparent bounds are trimmed, fitted within 480 × 480 pixels and padded to a 512 × 512 master at `public/brand/mr-ghashi-face.png`. The source's transparency is retained.
+
+Deterministic resampling produces `public/brand/favicon-16x16.png`, `public/brand/favicon-32x32.png`, and `public/brand/apple-touch-icon.png` (180 × 180). `src/app/favicon.ico` contains 16, 32 and 48 pixel PNG entries. Next.js's favicon file convention supplies the versioned ICO reference; root metadata supplies the size-specific PNG and Apple references. These derivatives inherit the header asset's reference-derived raster provenance described above.
+
 ## Logo preparation prompt
 
 Use case: background-extraction. Edit target: the user's attached 'Mr Ghashi Biz Card Genius Branding' concept sheet, with the yellow 3D mascot, brown round glasses, red utility belt, exact wordmark Mr Ghashi and tagline Your Biz Card Genius. Ignore the unrelated photograph of browser permission settings. Extract the existing compact horizontal logo composition near the bottom of the branding sheet: yellow mascot head on the left, dark brown 'Mr Ghashi' wordmark to its right, and 'Your Biz Card Genius' directly underneath. This is an asset-preparation task, NOT a creative redesign. Preserve the supplied character, facial expression, brown glasses, colors, wording and proportions closely. Output this single compact horizontal logo on a genuinely transparent background, cropped snugly with a little safe padding, approximately a 3:1 horizontal composition. Do not include the larger hero mascot, other scenes, white poster background, red app-icon tile, extra objects, decorative text or unrelated imagery. Do not invent new branding.
