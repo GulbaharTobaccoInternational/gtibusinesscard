@@ -127,3 +127,23 @@ Only the shared UI component and stylesheet changed. The company, template, rend
 - In the browser, a supplied work phone and extension appeared as `TEL;TYPE=WORK,VOICE` in the Double Leaf vCard. Clearing them removed the optional property. Other blank optional telephone roles were omitted. A two-sided digital PDF was downloaded through the mobile interface.
 
 No new fields, business-card styling, dimensions, font outlines, artwork, QR placement, data mapping or export behavior were introduced.
+
+## Mr Ghashi product redesign — 19 November 2026
+
+Implemented from the approved `fe3c366` baseline on `feature/mr-ghashi-redesign`. The existing Next.js stack, company registry, employee schemas, five private card fonts, fixed artwork, render/QR/vCard engines and export API routes are unchanged.
+
+The UI now has the Mr Ghashi mascot/wordmark, the exact department attribution, self-hosted Geist UI typography, a shared token system, a quieter form without numbered badges or repeated separators, a prominent neutral preview canvas and a cohesive export workspace. The printed-number selector and optional QR/vCard section remain distinct. PNG resolution sits directly beside PNG download. A workspace export shortcut keeps the download area easy to reach. On tablet/mobile, the preview precedes the editor and export actions. See `MR_GHASHI_BRAND_ASSETS.md` for the reference-derived raster assets, exact image preparation prompts and the retained Geist license.
+
+The appreciation feature is a separate UI component using `feedback-demo.ts` to construct an in-memory payload with reaction ID/label, intended recipient, company ID, timestamp, `mode: demo` and `sent: false`. It contains no network transport, mailto link, email service, storage or database. No employee contact record is included in its payload. The UI explicitly says no email has been sent. All four reactions were clicked and each displayed the correct selected state and confirmation. Keyboard Space/Enter selection, forward/reverse Tab trapping, Escape, close control, outside click and return of focus to the trigger were checked. The popup and confirmation were also inspected at mobile width.
+
+Executed checks:
+
+- Lint and strict TypeScript passed without warnings/errors; all 40 existing tests passed; production webpack builds passed after the UI refactor.
+- Before/after comparisons show byte-for-byte identical GTI and Double Leaf front/back SVGs, vCard payloads and 600 DPI card PNGs for the established fictional demos.
+- HTTP checks in production mode passed for both companies: preview data, all print/digital side modes, exact 92 × 57 mm PDF pages, 300/600 DPI PNG ZIPs, full-card QR decoding, invalid-export blocking, private font protection, origin checks and the original API contract.
+- Actual Chrome layouts were inspected at 1440 × 900, 1280 × 800, 1024 × 768, 768 × 1024, 390 × 844 and 375 × 812. Branding, department credit, selector, form labels, optional fields, preview sides and export layout were reviewed. Narrow layouts use one column and readable wrapping rather than squeezed desktop columns. Inspector fitting scales screenshot display only; the listed viewport dimensions were applied through the device toolbar.
+- GTI → Double Leaf starts with the isolated company form. Both fictional samples remain Alex/Jordan with `example.com` emails. A work phone and extension entered through the redesigned form appeared as `TEL;TYPE=WORK,VOICE` in the vCard; clearing those fields omitted the property. Blank optional roles remained absent.
+- Invalid email displayed an inline error, blocked the download and focused the email field. Reset cleared employee values; Use sample employee restored the active company's fictional example. Front/back preview navigation and the brown Double Leaf reverse were checked.
+- Downloads through the redesigned export controls were independently reopened: Double Leaf front-only print PDF has one 92 × 57 mm page, its digital PDF has two, and its 600 DPI ZIP contains distinct 2173 × 1346 front/back PNGs with 600 DPI metadata. Arrow-key resolution changes preserve the selected radio and focus. Keyboard company switching restored isolated Alex/Jordan values and kept focus on the selected company.
+
+UI assets are source-derived transparent raster preparations from the supplied inline concepts, not claimed to be original vector logos or pixel-identical original cutouts. The original referenced image paths were unavailable in this workspace. These UI assets never enter the printable card scenes. No authentication, archive, backend feedback delivery or new external service was added.

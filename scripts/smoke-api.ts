@@ -10,7 +10,7 @@ import { serializeVCard } from '../src/lib/vcard';
 const base=process.env.GULBAHAR_TEST_URL??'http://127.0.0.1:3107';
 const post=(route:string,body:unknown,origin=base)=>fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify(body)});
 await fs.mkdir('output/verification/companies',{recursive:true});
-const page=await fetch(base);assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Business Card Generator'));assert.ok(html.includes('Double Leaf'));
+const page=await fetch(base);assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
 for(const name of ['Gotham-Bold.otf','GothamBook.ttf','KULDIPA2.TTF','GeneralSans-Semibold.otf','GeneralSans-Regular.otf'])assert.equal((await fetch(base+'/private/assets/'+name)).status,404);
 // Preserve the original raw-employee API contract.
 assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti)).status,200);

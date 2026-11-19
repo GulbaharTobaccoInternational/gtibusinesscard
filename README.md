@@ -1,6 +1,6 @@
-# GTI and Double Leaf Business Card Generator
+# Mr Ghashi — Your Biz Card Genius
 
-One Next.js application supports two independent approved templates: **GTI — Gulbahar Tobacco International** and **Double Leaf — Double Leaf FZE**. The shared employee form, vCard engine, previews and downloads use a company registry; each company retains its own artwork, fonts, layout and QR position.
+An internal web application by GTI Marketing Department. One Next.js application supports two independent approved templates: **GTI — Gulbahar Tobacco International** and **Double Leaf — Double Leaf FZE**. The shared employee form, vCard engine, previews and downloads use a company registry; each company retains its own artwork, fonts, layout and QR position.
 
 ## Run locally
 
@@ -16,6 +16,12 @@ npm run dev
 Open http://127.0.0.1:3107. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
 
 The header selector offers exactly the two supported companies. Form values are isolated by company and retained in memory while switching. Refreshing clears all employee values; localStorage stores only the selected company ID. SessionStorage stores each company's export-side preference. No employee submissions are saved or sent to an external QR service.
+
+## Mr Ghashi interface
+
+The workspace uses self-hosted Geist typography, the supplied mascot identity, a prominent preview canvas and a shared export workspace. On smaller screens the preview appears before the form, followed by export controls. Both company forms retain their existing session isolation.
+
+**Give credit** opens four illustrated appreciation choices. Selection creates a structured local demo payload and displays its reaction, intended recipient `MrGhashi@gulbahartobacco.com` and an explicit no-email-sent message. It has no network transport, email service, database, mailto link or persistent feedback storage. See [UI asset provenance and preparation prompts](docs/MR_GHASHI_BRAND_ASSETS.md).
 
 ## Cards and downloads
 
