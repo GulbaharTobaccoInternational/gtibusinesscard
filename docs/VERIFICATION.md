@@ -66,3 +66,11 @@ A physical printer/paper/camera combination was not available, so scan an actual
 The original font license document was not supplied. Fonts remain private and server-only; the company must confirm the required outline-generation rights before deployment. The limited supplied Gotham glyph coverage is reported to the employee rather than substituted. Corporate SSO/access-proxy configuration remains a deployment task, documented in `DEPLOYMENT.md`.
 
 The full development dependency audit contains the upstream picomatch ReDoS advisory in lint tooling. Production dependencies have zero reported advisories. The lint toolchain is pinned to the ESLint version supported by Next's current React/accessibility/import plugins; npm emits an ESLint 9 support deprecation notice during installation. Track compatible upstream updates. No developer-tool glob accepts employee inputs at runtime.
+
+## Vercel build repair — 19 November 2026
+
+The first Git deployment failed at `check:assets` because the public repository excluded the unencrypted fonts and did not provision them at build time. It also selected Node 26 from the previous open-ended engine range.
+
+The build now uses Node 24.x and runs `prepare:assets` before Next.js. A committed AES-256-GCM encrypted font bundle is unlocked with the private `GULBAHAR_FONT_KEY` Vercel Secret; every restored font must match the original integrity manifest. Wrong keys, modified ciphertext and unapproved fonts are rejected. Plain font binaries and the local key file remain excluded from Git.
+
+Executed after the change: lint and strict TypeScript passed; all 25 automated tests passed, including six provisioning/security regression tests. A clean snapshot exported from Git's index, without plaintext fonts or a local secret file, restored both exact Gotham fonts and completed the production build using the environment Secret. Its browser assets were scanned to verify that the key value was not included.

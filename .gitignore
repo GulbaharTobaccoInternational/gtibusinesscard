@@ -12,3 +12,4 @@ docs/source-analysis/*-resources.txt
 docs/source-analysis/reference-*.png
 docs/source-analysis/original-qr-paths.json
 .DS_Store
+.vercel/

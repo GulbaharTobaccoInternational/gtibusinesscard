@@ -5,3 +5,5 @@ output
 tests
 docs/source-analysis
 .git
+.env*
+!.env.example

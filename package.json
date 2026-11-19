@@ -13,7 +13,9 @@
     "verify:visual": "python3 scripts/compare-reference.py",
     "check:assets": "node scripts/check-assets.mjs",
     "install:assets": "node scripts/install-assets.mjs",
-    "prebuild": "npm run check:assets",
+    "prebuild": "npm run prepare:assets",
+    "prepare:assets": "node scripts/prepare-assets.mjs",
+    "package:fonts": "node scripts/package-fonts.mjs",
     "test:api": "node --import tsx scripts/smoke-api.ts"
   },
   "dependencies": {
@@ -47,6 +49,6 @@
     "picomatch": "4.0.7"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "24.x"
   }
 }

@@ -4,9 +4,9 @@ The application is locally functional. Its source repository is [GulbaharTobacco
 
 ## Vercel
 
-1. Use Node.js 22 or 24. Select Next.js and use the repository root (`.`) as the deployment root. If deploying the original local asset workspace instead, select its `gulbahar-card-generator` subdirectory.
-2. Provide the licensed Gotham files through an authorized private build environment, then run `npm run check:assets`. They are intentionally Git-ignored. With a locally prepared checkout, the Vercel CLI can upload the project including these private files; `.vercelignore` does not exclude them. With a Git-driven build, arrange a controlled asset provisioning step before `npm run build`. Do not store fonts in `public/` or public Git.
-3. Install with `npm ci`, build with `npm run build`. `vercel.json` sets these commands. The prebuild asset check fails clearly when assets are absent or altered.
+1. Use Node.js 24.x, matching `package.json` and the project runtime. Select Next.js and use the repository root (`.`) as the deployment root. If deploying the original local asset workspace instead, select its `gulbahar-card-generator` subdirectory.
+2. In the project’s Environment Variables, configure `GULBAHAR_FONT_KEY` as a Secret for Production and Preview. Use the matching 64-character hexadecimal key from the administrator’s ignored `.env.fonts.local` file or secret manager. Never put its value in Git, screenshots, logs, or a `NEXT_PUBLIC_` variable. The encrypted bundle `private/assets/gotham-fonts.enc.json` is included in Git; prebuild decrypts it into server-only font files and checks their original SHA-256 hashes. Unencrypted fonts remain Git-ignored.
+3. Install with `npm ci`, build with `npm run build`. `vercel.json` sets these commands. Prebuild runs `prepare:assets` before Next.js. It restores missing fonts using the Secret and verifies every approved asset. It fails with an actionable message if the key is missing, wrong, or the artwork is altered; it never substitutes a font.
 4. `next.config.ts` explicitly includes `private/assets/*` in server output tracing. Verify both fonts and artwork are present in the final server bundle.
 5. Configure staff-only access before opening production to employees. Protect the UI and **both API routes** using the organization's identity provider and a trusted access proxy, or a properly authorized SSO integration. For Vercel, use a deployment protection configuration that actually restricts the intended staff audience; a shared public URL is insufficient.
 6. Serve over HTTPS. Apply request/rate limits at the authenticated edge. No app password or frontend secret should be added.
@@ -20,7 +20,7 @@ Run `npm ci`, provision private fonts, `npm run build`, then `npm start` behind 
 
 ## Privacy and environment
 
-- No application environment variables or credentials are needed for card generation. `.env.example` documents this. Any future SSO credentials belong in the hosting secret store, never `NEXT_PUBLIC_*` variables.
+- `GULBAHAR_FONT_KEY` is used only by the build to restore the official fonts. It is not needed by the card renderer after provisioning. `.env.example` documents the variable without its value. Any future SSO credentials belong in the hosting secret store, never `NEXT_PUBLIC_*` variables.
 - Employee values go only to this application's server to generate outlines, QR and downloads; they are not sent to QRCode Monkey, analytics or other external APIs.
 - API responses are `private, no-store`. Request bodies are not logged, and there is no database, localStorage contact retention or server-side contact cache. Fonts and static official artwork are the only cached objects.
 - Request bodies are capped at 16 KiB; phone/text lengths are bounded; cross-origin JSON submissions are rejected; corporate settings are never accepted from employee requests.
@@ -34,3 +34,9 @@ Production dependencies were checked with `npm audit --omit=dev`: zero advisorie
 ## Print configuration
 
 Default artwork, page and trim are all 92 × 57 mm. Additional bleed is zero and disabled. Preserve the supplier's existing workflow. A future bleed template must extend backgrounds and keep separate artwork/trim/bleed/page dimensions; no white-margin shortcut is implemented.
+
+## Diagnosing the initial Git build failure
+
+The initial Git-based Vercel build could not find `Gotham-Bold.otf` because licensed fonts were correctly excluded from the public repository, but the build had no provisioning step. The encrypted bundle plus `GULBAHAR_FONT_KEY` now supplies both exact fonts before Next.js builds. The previous open-ended Node range also selected Node 26; the project now pins Node 24.x. The npm `cache-dir`, lint deprecation and optional install-script notices were not the cause of that failed build.
+
+For a new deployment target, set the same build Secret and redeploy. For a local source archive with no fonts, run `npm run prepare:assets` with that environment variable set, or install the licensed fonts with `npm run install:assets`. Keep `.env.fonts.local` private; it is excluded from both Git and Vercel source uploads.

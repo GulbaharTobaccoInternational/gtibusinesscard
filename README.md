@@ -4,7 +4,7 @@ A working Next.js application for Gulbahar Tobacco International FZE. It reprodu
 
 ## Run locally
 
-Node.js 22 or newer is required. The licensed Gotham font files are installed separately and are not included in this public repository.
+Node.js 24.x is required (matching the pinned Vercel runtime). The licensed Gotham font files are installed separately and are not included in this public repository.
 
 ```sh
 git clone https://github.com/GulbaharTobaccoInternational/gtibusinesscard.git
@@ -47,6 +47,8 @@ The static vector model is `private/assets/source-artwork.json`; layout anchors 
 
 ## Licensed assets
 
+Git builds include an authenticated encrypted font bundle, which prebuild restores using the server-side `GULBAHAR_FONT_KEY` secret. The unencrypted fonts remain excluded from Git.
+
 The official branding is present. Two original Gotham fonts are used: `Gotham-Bold.otf` and `GothamBook.ttf`. They remain outside `public/` and are ignored by Git; the browser receives glyph paths only. No font license document was supplied, and the embedding flags in font metadata do not establish commercial usage rights. Confirm the company's license covers server-side outline generation before distributing or deploying the app.
 
 For a fresh checkout, install the supplied private fonts:
@@ -55,7 +57,9 @@ For a fresh checkout, install the supplied private fonts:
 npm run install:assets -- "/absolute/path/to/B Card Assets"
 ```
 
-The installer checks them against `private/assets/manifest.json`. Keep licensed binaries in an authorized private build environment. Do not commit them to a public repository. The font files contain a limited Latin character set: supported accents work, but unsupported scripts are reported and blocked for printed text. QR serialization itself supports UTF-8. A licensed Gotham version with broader glyph coverage is needed for additional printed scripts; no substitute is used.
+The installer checks them against `private/assets/manifest.json`. Keep licensed binaries and the bundle decryption key in an authorized private build environment. Do not commit either to a public repository. The encrypted bundle can be committed; its key is stored separately in Vercel’s Secret settings. The font files contain a limited Latin character set: supported accents work, but unsupported scripts are reported and blocked for printed text. QR serialization itself supports UTF-8. A licensed Gotham version with broader glyph coverage is needed for additional printed scripts; no substitute is used.
+
+For administrators replacing approved fonts, `npm run package:fonts` rebuilds the encrypted bundle using the existing key, or creates a new key in the ignored `.env.fonts.local` file when none exists. Set the matching key in Vercel before deploying the bundle. The key is never printed by the packaging script.
 
 To regenerate the static model after an approved artwork update, run `scripts/extract-artwork.py` with pypdf and PyMuPDF installed. It copies the source fonts and extracts vector paths without changing the original PDF. Review changes, visually verify them and deliberately update the integrity manifest. Do not merely accept an unexpected checksum.
 
@@ -76,6 +80,6 @@ See [the verification record](docs/VERIFICATION.md) for executed results, thresh
 
 The source is maintained in [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). The app is prepared for Vercel and conventional Node hosting; a live deployment has not been published. See [deployment instructions](docs/DEPLOYMENT.md).
 
-No application secrets or database are required. Protect **all routes**, including `/api/render` and `/api/export`, with corporate SSO or a staff-restricted access proxy before making it available online. The UI's internal-tool label is not authentication. No identity provider or credentials were supplied, so no login system or passwords have been invented.
+A Git/Vercel build needs the `GULBAHAR_FONT_KEY` Secret to restore the encrypted fonts; no database is required. Local use with fonts already installed does not require this secret. Protect **all routes**, including `/api/render` and `/api/export`, with corporate SSO or a staff-restricted access proxy before making it available online. The UI's internal-tool label is not authentication. No identity provider or credentials were supplied, so no login system or passwords have been invented.
 
 Additional bleed is disabled at 0 mm. Print artwork, final trim and page dimensions are separately recorded in `PRINT_CONFIG` for future printer-specific work. Enabling bleed requires extending backgrounds and verifying output; changing a number alone is intentionally not implemented.
