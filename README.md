@@ -1,85 +1,65 @@
-# Gulbahar Business Card Generator
+# GTI and Double Leaf Business Card Generator
 
-A working Next.js application for Gulbahar Tobacco International FZE. It reproduces the supplied approved card using vector paths extracted from the original PDF. Employee text is converted to Gotham glyph outlines on the server. Preview, PDF and PNG use the same scene in millimeters.
+One Next.js application supports two independent approved templates: **GTI — Gulbahar Tobacco International** and **Double Leaf — Double Leaf FZE**. The shared employee form, vCard engine, previews and downloads use a company registry; each company retains its own artwork, fonts, layout and QR position.
 
 ## Run locally
 
-Node.js 24.x is required (matching the pinned Vercel runtime). The licensed Gotham font files are installed separately and are not included in this public repository.
+Use Node.js 24.x and the supplied private asset folders:
 
 ```sh
-git clone https://github.com/GulbaharTobaccoInternational/gtibusinesscard.git
-cd gtibusinesscard
 npm ci
-npm run install:assets -- "/absolute/path/to/B Card Assets"
+npm run install:assets -- "/absolute/path/to/B Card Assets" "/absolute/path/to/B Card Assets - Double Leaf"
 npm run check:assets
 npm run dev
 ```
 
-Open http://127.0.0.1:3107. The form starts empty; **Use sample employee** loads the approved Liwaa Sahib fixture. The application does not save employee submissions. Only the export-side preference is stored in sessionStorage.
+Open http://127.0.0.1:3107. Both forms start empty. **Use sample employee** loads fictional Alex Morgan for GTI or Jordan Taylor for Double Leaf, with `example.com` emails and the demonstration number `+971 50 000 0000`. A UI-only **Demo data** badge identifies these examples; it never enters the card artwork.
+
+The header selector offers exactly the two supported companies. Form values are isolated by company and retained in memory while switching. Refreshing clears all employee values; localStorage stores only the selected company ID. SessionStorage stores each company's export-side preference. No employee submissions are saved or sent to an external QR service.
+
+## Cards and downloads
+
+- Both templates use 92 × 57 mm pages, no automatic bleed or resizing.
+- Front Only produces the personalized white front; Front + Back produces white front then approved colored reverse (GTI red, Double Leaf brown).
+- Print PDF uses genuine glyph outlines, vector logos/icons/QR, and original source color definitions. GTI's original CMYK/Pantone artwork remains unchanged. Double Leaf's supplied RGB definitions are preserved.
+- Digital PDF uses outlined RGB artwork. PNG supports 300/600 DPI, either one front image or a ZIP containing separate front/back images.
+- Filenames include the selected company and safely sanitized employee name.
+- Shared validation blocks missing required data, unsupported glyphs, text overflow and excessive QR density. QR print warnings require acknowledgment before export.
+- Extra phone roles are available in the QR. Double Leaf can print a selected employee mobile/direct office number. Its general company telephone is intentionally empty until a verified number is supplied.
+
+## Architecture and source accuracy
+
+`src/lib/company.ts` defines corporate information and application accents. `src/lib/templates.ts` defines the artwork/font/layout registry. Independent front renderers live under `src/lib/templates/`; the shared canonical scene drives SVG, PDF and PNG. Company IDs are validated at both API routes. Original GTI requests without a company ID remain supported.
+
+Fixed vectors are in `private/assets/source-artwork.json` and `source-artwork-double-leaf.json`. The approved PDFs take precedence when diagrams or palette images disagree. See [GTI design specification](docs/DESIGN_SPEC.md), [Double Leaf design specification](docs/DOUBLE_LEAF_DESIGN_SPEC.md) and [verification record](docs/VERIFICATION.md).
+
+Original PDFs, SVG metadata, reference ZIPs and private reference employee records are excluded from the deployment. The Double Leaf source has its brown back on page 1; the exporter deliberately reverses that source order.
+
+## Private fonts
+
+The five supplied fonts are server-only: Gotham Bold/Book for GTI, KULDIPA2 Regular and General Sans Semibold/Regular for Double Leaf. Plain font files are Git-ignored and never served from `public/`; browsers receive glyph paths. Their SHA-256 hashes are checked against the integrity manifest.
+
+Git builds restore all five fonts from the authenticated AES-256-GCM bundle using the existing server-side `GULBAHAR_FONT_KEY` environment Secret. Its historical filename `gotham-fonts.enc.json` is retained for deployment compatibility. The key and plaintext fonts must remain outside Git. Font coverage is validated before export; no substitute font is used. The supplied font license documents were not included, so rights to server-side outline generation remain the company's responsibility.
+
+Administrators can run `npm run package:fonts` after an approved font update. It uses the existing key or creates one in ignored `.env.fonts.local`, without printing it. Keep the matching Secret configured for Production and Preview. Local rendering with all fonts installed does not require a key.
+
+## Verification
 
 ```sh
 npm run lint
 npm run typecheck
 npm test
-npm run build
-npm run start -- --port 3107
-```
-
-The production build uses Next.js's supported webpack compiler. Turbopack's production CSS compiler could not bind its internal port under this desktop environment's restrictions. The development server can still use Turbopack.
-
-## What works
-
-- Identity and contact form with required-field, email, international-phone, glyph-coverage and layout validation.
-- Extra work, company mobile, home, additional and fax numbers; one selected mobile prints, the others go into the QR contact.
-- Central, employee-read-only corporate defaults in `src/lib/company.ts`.
-- Debounced live front/reverse previews, zoom, QR inspection, reset and sample mode.
-- Locally encoded vCard 3.0 with UTF-8-safe folding, escaped values, structured names/address, typed phones and the original Dubai state value.
-- **Front Only** exports exactly one page; **Front + Back** exactly two.
-- Print PDF: 92 × 57 mm, real glyph paths, vector QR, original CMYK and Pantone Separation colors, no fonts or raster images, no added bleed.
-- Digital PDF: the same outlined geometry in RGB. PNG: 300/600 DPI, a single front PNG or two separate PNGs in a ZIP.
-- Export validation runs again on the server. Dense QR codes require a proof-scan acknowledgment; excessively dense codes are blocked.
-
-## Source accuracy
-
-Read [the design specification](docs/DESIGN_SPEC.md). The approved PDF is the authority where diagrams or SVGs disagree. Reference files remain untouched in the parent asset folder. `docs/source-analysis/inventory.json` records every supplied asset and its SHA-256.
-
-The static vector model is `private/assets/source-artwork.json`; layout anchors are in `src/lib/design.ts`. The SVG and PDF writers both consume the canonical scene. No browser CSS positions printed content, no system fonts are used in cards, and print export never goes through a bitmap.
-
-## Licensed assets
-
-Git builds include an authenticated encrypted font bundle, which prebuild restores using the server-side `GULBAHAR_FONT_KEY` secret. The unencrypted fonts remain excluded from Git.
-
-The official branding is present. Two original Gotham fonts are used: `Gotham-Bold.otf` and `GothamBook.ttf`. They remain outside `public/` and are ignored by Git; the browser receives glyph paths only. No font license document was supplied, and the embedding flags in font metadata do not establish commercial usage rights. Confirm the company's license covers server-side outline generation before distributing or deploying the app.
-
-For a fresh checkout, install the supplied private fonts:
-
-```sh
-npm run install:assets -- "/absolute/path/to/B Card Assets"
-```
-
-The installer checks them against `private/assets/manifest.json`. Keep licensed binaries and the bundle decryption key in an authorized private build environment. Do not commit either to a public repository. The encrypted bundle can be committed; its key is stored separately in Vercel’s Secret settings. The font files contain a limited Latin character set: supported accents work, but unsupported scripts are reported and blocked for printed text. QR serialization itself supports UTF-8. A licensed Gotham version with broader glyph coverage is needed for additional printed scripts; no substitute is used.
-
-For administrators replacing approved fonts, `npm run package:fonts` rebuilds the encrypted bundle using the existing key, or creates a new key in the ignored `.env.fonts.local` file when none exists. Set the matching key in Vercel before deploying the bundle. The key is never printed by the packaging script.
-
-To regenerate the static model after an approved artwork update, run `scripts/extract-artwork.py` with pypdf and PyMuPDF installed. It copies the source fonts and extracts vector paths without changing the original PDF. Review changes, visually verify them and deliberately update the integrity manifest. Do not merely accept an unexpected checksum.
-
-## Verification
-
-```sh
 npm run verify:exports
-python3 -m venv .tools/qa-venv
-.tools/qa-venv/bin/pip install -r requirements-qa.txt
-.tools/qa-venv/bin/python scripts/compare-reference.py
+npm run build
+GULBAHAR_TEST_URL=http://127.0.0.1:3107 npm run test:api
 ```
 
-The comparison expects the original PDF in its supplied relative location. Set `GULBAHAR_REFERENCE_PDF` to use another location. It renders both PDFs at 600 DPI, saves overlays/differences, decodes the final print PDF QR, verifies no text/font/image resources, checks exact dimensions and decodes both PNG resolutions. QR patterns are excluded from visual similarity metrics because the new standards-compliant payload differs from the old sample. Run these commands only with the non-sensitive sample fixture; outputs contain its contact details and are ignored by Git.
+For private source comparisons, install `requirements-qa.txt` in an isolated Python environment and run `scripts/compare-reference.py` after `verify:exports`. Set `GULBAHAR_REFERENCE_PDF` and `DOUBLE_LEAF_REFERENCE_PDF` if the original PDFs are stored elsewhere. The script transiently extracts original reference contact data solely to reproduce the reference typography; records are not hardcoded in application demos or tests. All comparison outputs stay in Git-ignored `output/` and must remain private. Fictional demo exports and QR payloads are also checked independently.
 
-See [the verification record](docs/VERIFICATION.md) for executed results, thresholds, browser coverage and practical limits. Print at 100% scale, then scan a physical proof before a bulk order. Software decoding cannot certify a particular printer, paper stock or smartphone camera. Adobe Illustrator was not available for an interactive open/re-save check; the structural checks establish that the export contains paths rather than embedded fonts or images.
+Tests cover both templates, original GTI scene/SVG/vCard digests, one/two-page print/digital PDFs, vector resources, safe filenames, PNG ZIP contents, exact QR decoding at both resolutions, company information, unsupported text/overflow and authenticated font provisioning. Reference comparisons render at 600 DPI and save overlays/differences with structural PDF checks.
 
-## Deploy
+## Deployment
 
-The source is maintained in [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Vercel project `gtibc` deploys the `main` branch. The [production application](https://gtibc-gulbahar-tobacco-internationals-projects.vercel.app) uses the project’s existing deployment protection. Conventional Node hosting is also supported. See [deployment instructions](docs/DEPLOYMENT.md).
+Source: [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Existing Vercel project `gtibc` deploys `main`; [open the application](https://gtibc-kappa.vercel.app). This update preserves the project's existing access settings and uses the same font Secret. See [deployment instructions](docs/DEPLOYMENT.md).
 
-A Git/Vercel build needs the `GULBAHAR_FONT_KEY` Secret to restore the encrypted fonts; no database is required. Local use with fonts already installed does not require this secret. Protect **all routes**, including `/api/render` and `/api/export`, with corporate SSO or a staff-restricted access proxy before making it available online. The UI's internal-tool label is not authentication. No identity provider or credentials were supplied, so no login system or passwords have been invented.
-
-Additional bleed is disabled at 0 mm. Print artwork, final trim and page dimensions are separately recorded in `PRINT_CONFIG` for future printer-specific work. Enabling bleed requires extending backgrounds and verifying output; changing a number alone is intentionally not implemented.
+No database or new authentication system is needed for this update. Employee API responses remain private and non-cacheable. A physical print proof and scan at 100% scale are still needed before bulk printing; software decoding cannot certify a particular printer, stock or camera.

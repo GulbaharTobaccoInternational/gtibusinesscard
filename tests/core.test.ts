@@ -9,7 +9,7 @@ import { COMPANY } from '../src/lib/company';
 import { escapeVCard, foldLine, serializeVCard } from '../src/lib/vcard';
 import { buildCard, previewCard, sceneToSvg } from '../src/lib/renderer';
 import { exportCard, ArtworkValidationError } from '../src/lib/export';
-import { SAMPLE_EMPLOYEE } from './fixtures/liwaa';
+import { SAMPLE_EMPLOYEE } from './fixtures/demo';
 import { readPrivateJson, RequestError } from '../src/lib/http';
 const sample=SAMPLE_EMPLOYEE;
 
@@ -18,14 +18,14 @@ test('required fields are enforced; optional phones are not required',()=>{
  assert.deepEqual(validateEmployee(EMPTY_EMPLOYEE).map(i=>i.field),['firstName','lastName','designation','email']);
 });
 test('valid international telephone formats and email',()=>{
- for(const mobile of ['+971 50 123 4567','00964 776 627 7737','+1 (212) 555-1234'])assert.equal(validateEmployee({...sample,mobile}).length,0,mobile);
+ for(const mobile of ['+971 50 123 4567','00971 50 000 0000','+1 (212) 555-1234'])assert.equal(validateEmployee({...sample,mobile}).length,0,mobile);
  for(const mobile of ['5551234','+1ABC','+123','+1234567890123456'])assert.ok(validateEmployee({...sample,mobile}).some(i=>i.field==='mobile'),mobile);
  assert.ok(validateEmployee({...sample,email:'invalid@'}).some(i=>i.field==='email'));
 });
 test('vCard 3.0 has correct first/last structure, defaults, field types and CRLF',()=>{
  const employee={...sample,workPhone:'+971 4 123 4567',extension:'105',companyMobile:'+971 50 111 2222',privatePhone:'+971 50 222 3333',additionalPhone:'+971 50 333 4444',workFax:'+971 4 555 6666',privateFax:'+971 4 666 7777'};
  const card=serializeVCard(employee).replace(/\r\n /g,'');
- for(const expected of ['BEGIN:VCARD\r\nVERSION:3.0','N:Sahib;Liwaa;;;','FN:Liwaa Sahib',`ORG:${COMPANY.organization}`,'TITLE:Commercial Development Lead','EMAIL;TYPE=INTERNET,WORK:liwaa@gulbahartobacco.com','TEL;TYPE=CELL,VOICE:+964 776 627 7737','TEL;TYPE=WORK,VOICE:+971 4 123 4567 x105','TEL;TYPE=WORK,CELL:+971 50 111 2222','TEL;TYPE=HOME,VOICE:+971 50 222 3333','TEL;TYPE=VOICE:+971 50 333 4444','TEL;TYPE=WORK,FAX:+971 4 555 6666','TEL;TYPE=HOME,FAX:+971 4 666 7777',`URL:https://${COMPANY.website}`,`ADR;TYPE=WORK:61401;;MO 0448\\, R/A No. 13\\, Jebel Ali Free Zone;Dubai;إمارة دبيّ;;United Arab Emirates`,'END:VCARD\r\n'])assert.ok(card.includes(expected),expected);
+ for(const expected of ['BEGIN:VCARD\r\nVERSION:3.0','N:Morgan;Alex;;;','FN:Alex Morgan',`ORG:${COMPANY.organization}`,'TITLE:Marketing Manager','EMAIL;TYPE=INTERNET,WORK:alex.morgan@example.com','TEL;TYPE=CELL,VOICE:+971 50 000 0000','TEL;TYPE=WORK,VOICE:+971 4 123 4567 x105','TEL;TYPE=WORK,CELL:+971 50 111 2222','TEL;TYPE=HOME,VOICE:+971 50 222 3333','TEL;TYPE=VOICE:+971 50 333 4444','TEL;TYPE=WORK,FAX:+971 4 555 6666','TEL;TYPE=HOME,FAX:+971 4 666 7777',`URL:https://${COMPANY.website}`,`ADR;TYPE=WORK:61401;;MO 0448\\, R/A No. 13\\, Jebel Ali Free Zone;Dubai;إمارة دبيّ;;United Arab Emirates`,'END:VCARD\r\n'])assert.ok(card.includes(expected),expected);
  assert.ok(!/(?<!\r)\n/.test(serializeVCard(employee)));
 });
 test('escaping and UTF-8 folding preserve values without splitting characters',()=>{
@@ -49,7 +49,7 @@ test('names, designation and contact overflow are detected without truncation',(
  assert.ok(longTitle.issues.some(i=>i.code==='overflow-designation'));
  const longEmail=buildCard({...sample,email:'a'.repeat(100)+'@gulbahartobacco.com'});
  assert.ok(longEmail.issues.some(i=>i.code==='overflow-email'));
- for(const designation of ['Marketing Manager','Commercial Development Lead','Senior Business Development Manager','Regional Sales & Distribution Director'])assert.ok(!buildCard({...sample,designation}).issues.some(i=>i.code==='overflow-designation'));
+ for(const designation of ['Marketing Manager','Marketing Manager','Senior Business Development Manager','Regional Sales & Distribution Director'])assert.ok(!buildCard({...sample,designation}).issues.some(i=>i.code==='overflow-designation'));
 });
 test('supported accents render; unsupported characters are reported without font substitution',()=>{
  assert.ok(!buildCard({...sample,firstName:'José',lastName:'Müller'}).issues.some(i=>i.code.startsWith('glyph-')));

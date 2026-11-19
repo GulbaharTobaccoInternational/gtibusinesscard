@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { gzipSync, gunzipSync } from 'node:zlib';
 
-export const FONT_FILES = Object.freeze(['Gotham-Bold.otf', 'GothamBook.ttf']);
+export const FONT_FILES = Object.freeze(['Gotham-Bold.otf', 'GothamBook.ttf', 'KULDIPA2.TTF', 'GeneralSans-Semibold.otf', 'GeneralSans-Regular.otf']);
 export const FONT_KEY_ENV = 'GULBAHAR_FONT_KEY';
 export const BUNDLE_FILE = 'gotham-fonts.enc.json';
 const AAD = Buffer.from('gulbahar-business-card-fonts:v1');
@@ -82,7 +82,7 @@ export function prepareAssets(directory, keyValue) {
   }
   if (!missing.length) return { restored: 0 };
   if (!keyValue) {
-    throw new Error(`Missing official Gotham fonts. In Vercel, add ${FONT_KEY_ENV} as a Secret for the deployment environment, then redeploy. For local use, run npm run install:assets -- /path/to/B-Card-Assets. See docs/DEPLOYMENT.md.`);
+    throw new Error(`Missing official company fonts. In Vercel, add ${FONT_KEY_ENV} as a Secret for the deployment environment, then redeploy. For local use, run npm run install:assets -- /path/to/B-Card-Assets. See docs/DEPLOYMENT.md.`);
   }
   const bundlePath = path.join(directory, BUNDLE_FILE);
   if (!fs.existsSync(bundlePath)) throw new Error('The encrypted official font bundle is missing. Restore it from the approved repository.');

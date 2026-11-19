@@ -1,4 +1,4 @@
-import { COMPANY } from './company';
+import { getCompany, type CompanyId } from './company';
 import { type Employee, fullName } from './employee';
 export function escapeVCard(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/\r\n|\r|\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
@@ -13,7 +13,8 @@ export function foldLine(line: string): string {
   }
   return result;
 }
-export function serializeVCard(employee: Employee): string {
+export function serializeVCard(employee: Employee, companyId: CompanyId = 'gti'): string {
+  const COMPANY = getCompany(companyId);
   const esc = escapeVCard;
   const lines = [
     'BEGIN:VCARD', 'VERSION:3.0',
@@ -27,7 +28,7 @@ export function serializeVCard(employee: Employee): string {
   tel(employee.workPhone + (employee.workPhone && employee.extension ? ` x${employee.extension}` : ''), 'WORK,VOICE');
   tel(employee.companyMobile, 'WORK,CELL'); tel(employee.privatePhone, 'HOME,VOICE');
   tel(employee.additionalPhone, 'VOICE'); tel(employee.workFax, 'WORK,FAX'); tel(employee.privateFax, 'HOME,FAX');
-  if (employee.includeCompanyPhone && employee.workPhone !== COMPANY.telephone) tel(COMPANY.telephone, 'WORK,VOICE');
+  if (employee.includeCompanyPhone && COMPANY.telephone && employee.workPhone !== COMPANY.telephone) tel(COMPANY.telephone, 'WORK,VOICE');
   lines.push(`ADR;TYPE=WORK:${esc(COMPANY.poBox)};;${esc(COMPANY.street)};${esc(COMPANY.city)};${esc(COMPANY.state)};;${esc(COMPANY.country)}`);
   lines.push('END:VCARD');
   return lines.map(foldLine).join('\r\n') + '\r\n';

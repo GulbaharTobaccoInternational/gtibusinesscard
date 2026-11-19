@@ -4,12 +4,9 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { BUNDLE_FILE, encryptFonts, hashAsset, prepareAssets } from '../scripts/font-bundle.mjs';
+import { BUNDLE_FILE, FONT_FILES, encryptFonts, hashAsset, prepareAssets } from '../scripts/font-bundle.mjs';
 
-const approvedFonts = {
-  'Gotham-Bold.otf': Buffer.from('approved bold font fixture'),
-  'GothamBook.ttf': Buffer.from('approved book font fixture'),
-};
+const approvedFonts = Object.fromEntries(FONT_FILES.map(name=>[name,Buffer.from(`approved font fixture: ${name}`)]));
 function fixture() {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'gulbahar-font-build-'));
   const key = crypto.randomBytes(32).toString('hex');
@@ -21,10 +18,10 @@ function fixture() {
   fs.writeFileSync(path.join(directory, BUNDLE_FILE), JSON.stringify(bundle));
   return { directory, key, bundle, cleanup: () => fs.rmSync(directory, { recursive: true, force: true }) };
 }
-test('a fresh Git checkout restores both exact fonts using the private build key', () => {
+test('a fresh Git checkout restores all five exact fonts using the private build key', () => {
   const f = fixture();
   try {
-    assert.deepEqual(prepareAssets(f.directory, f.key), { restored: 2 });
+    assert.deepEqual(prepareAssets(f.directory, f.key), { restored: FONT_FILES.length });
     for (const [name, bytes] of Object.entries(approvedFonts)) assert.deepEqual(fs.readFileSync(path.join(f.directory, name)), bytes);
     assert.deepEqual(prepareAssets(f.directory, undefined), { restored: 0 });
   } finally { f.cleanup(); }
@@ -46,7 +43,7 @@ test('a wrong key or a tampered encrypted bundle cannot install fonts', () => {
     for (const name of Object.keys(approvedFonts)) assert.ok(!fs.existsSync(path.join(f.directory, name)));
   } finally { f.cleanup(); }
 });
-test('authenticated but unapproved font data is rejected before either file is written', () => {
+test('authenticated but unapproved font data is rejected before any file is written', () => {
   const f = fixture();
   try {
     const bad = encryptFonts({ ...approvedFonts, 'GothamBook.ttf': Buffer.from('unapproved replacement font') }, f.key);
@@ -59,7 +56,7 @@ test('only missing fonts are restored and corrupt existing artwork is rejected',
   const f = fixture();
   try {
     fs.writeFileSync(path.join(f.directory, 'Gotham-Bold.otf'), approvedFonts['Gotham-Bold.otf']);
-    assert.deepEqual(prepareAssets(f.directory, f.key), { restored: 1 });
+    assert.deepEqual(prepareAssets(f.directory, f.key), { restored: FONT_FILES.length - 1 });
     fs.writeFileSync(path.join(f.directory, 'source-artwork.json'), 'changed artwork');
     assert.throws(() => prepareAssets(f.directory, f.key), /Official asset differs/);
   } finally { f.cleanup(); }

@@ -7,5 +7,5 @@ import { FONT_KEY_ENV, prepareAssets } from './font-bundle.mjs';
 const localSecret = path.resolve('.env.fonts.local');
 if (!process.env[FONT_KEY_ENV] && fs.existsSync(localSecret)) process.loadEnvFile(localSecret);
 const { restored } = prepareAssets(path.resolve('private/assets'), process.env[FONT_KEY_ENV]);
-if (restored) console.log(`Restored ${restored} official Gotham fonts from the encrypted build bundle.`);
-console.log('Official artwork and both Gotham fonts match the approved asset manifest.');
+if (restored) console.log(`Restored ${restored} official company fonts from the encrypted build bundle.`);
+console.log('Official artwork and all company fonts match the approved asset manifest.');

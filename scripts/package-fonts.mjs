@@ -18,5 +18,5 @@ fs.writeFileSync(path.join(directory, BUNDLE_FILE), JSON.stringify(bundle) + '\n
 if (!fs.existsSync(secretPath) && !process.env[FONT_KEY_ENV]) {
   fs.writeFileSync(secretPath, `${FONT_KEY_ENV}=${key}\n`, { mode: 0o600, flag: 'wx' });
 }
-console.log(`Packaged both official fonts in private/assets/${BUNDLE_FILE}.`);
+console.log(`Packaged all official company fonts in private/assets/${BUNDLE_FILE}.`);
 console.log('The key is kept in the existing environment or the ignored .env.fonts.local file. It has not been printed.');

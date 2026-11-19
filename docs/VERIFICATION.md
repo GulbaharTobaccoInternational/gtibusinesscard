@@ -20,7 +20,7 @@ The logic suite covers required/optional inputs, international phone syntax, ema
 
 ## Reference comparison
 
-Original and regenerated Liwaa cards were rendered with the same MuPDF engine at 600 DPI. The QR footprint plus quiet zone is excluded from similarity metrics because the new vCard serialization changes the QR pattern. Every other region is included, including employee text.
+Original and regenerated GTI reference cards were rendered with the same MuPDF engine at 600 DPI. The QR footprint plus quiet zone is excluded from similarity metrics because the new vCard serialization changes the QR pattern. Every other region is included, including employee text.
 
 | Page | Mean absolute RGB difference, 0–255 scale | Pixels with any channel differing by >10 |
 | --- | ---: | ---: |
@@ -76,3 +76,39 @@ The build now uses Node 24.x and runs `prepare:assets` before Next.js. A committ
 Executed after the change: lint and strict TypeScript passed; all 25 automated tests passed, including six provisioning/security regression tests. A clean snapshot exported from Git's index, without plaintext fonts or a local secret file, restored both exact Gotham fonts and completed the production build using the environment Secret. Its browser assets were scanned to verify that the key value was not included.
 
 The Vercel source package also retains `tests/` so the fixture imports used by verification scripts resolve during Next.js type checking. A second clean-source production build applied every `.vercelignore` exclusion and passed before pushing this packaging correction.
+
+## Two-company release — 19 November 2026
+
+The update was implemented on `feature/double-leaf` from the approved `3faa2b0` baseline. The application now has separate GTI and Double Leaf configurations, fonts, fixed artwork, front renderers and QR positions, with shared form/export/vCard engines.
+
+Executed checks for this release:
+
+- Lint and strict TypeScript passed; all **40 automated tests** passed.
+- Original GTI front/back scenes, SVGs and vCard serialization match pre-update SHA-256 digests byte-for-byte for the same fictional employee. The work-phone-only validation case is also preserved.
+- A source snapshot without plaintext fonts or local secrets restored all five exact fonts using the existing build key and completed the production webpack build. Server output traces include the five private fonts; the browser assets contain no decryption key.
+- HTTP checks against the production server passed for both companies: selected-company preview/vCard, all print/digital side modes, exact page dimensions, 300/600 DPI PNG ZIPs, decoded full-card QR payloads, invalid export blocking, private font 404 responses, foreign-origin rejection, unknown company rejection and the original raw-employee API contract.
+- Actual browser downloads were independently reopened: Double Leaf front-only print PDF has one page; its duplex digital PDF has two; the PNG ZIP has separately named front/back files.
+- Browser switching restored Alex for GTI and Jordan for Double Leaf. Editing GTI did not change Double Leaf. Refresh retained the selected company and cleared employee fields. The two exact requested selector options, Demo data badge and correct Double Leaf vCard were checked.
+- Desktop and 390-pixel responsive layouts were visually inspected. The company selector and employee fields fit the narrow viewport. The final production console had no log errors; development-only React diagnostics are blocked by the existing strict eval policy. Chrome's Issues history retained that development CSP diagnostic and form-field identifier suggestions.
+- `npm audit` reported zero vulnerabilities across the complete installed dependency set at this release verification. This supersedes the older development advisory record above.
+
+### Source PDF reproduction
+
+Both private source PDFs were compared to regenerated references at 600 DPI using original employee values only transiently for geometric QA. These values are absent from app demos, fixtures and preview defaults. QR footprints are excluded from similarity metrics because payload serialization changes module patterns. The actual generated QR is independently decoded. All other artwork, including personalized typography, is compared.
+
+| Company / side | Mean absolute RGB difference (0–255) | Pixels differing by >10 in any channel |
+| --- | ---: | ---: |
+| GTI front, excluding QR | 0.007314 | 0.004387% |
+| GTI reverse | 0.000236 | 0% |
+| Double Leaf front, excluding QR | 0.031604 | 0.131162% |
+| Double Leaf reverse | 0.000022 | 0% |
+
+All passed the tightened thresholds of mean error below 0.1 and changed pixels below 0.2%. Tiny residual differences remain from coordinate precision, glyph metrics and antialiasing; this is not a claim of pixel identity. Fixed artwork comes from source paths. Double Leaf's name preserves brown fill plus 0.25 pt stroke, and the source's website-grey definition takes precedence over the palette image's black label.
+
+Reopened PDFs contain no live text operators, font resources or image XObjects. Every page, TrimBox and BleedBox is exactly 92 × 57 mm. Double Leaf's generated page 1 matches source page 2 (white front), and generated page 2 matches source page 1 (brown reverse). Fictional print/digital PDF QR and 300/600 DPI PNG QR payloads match the serializer through independent ZXing decoding. Resulting pages and source overlays were visually inspected.
+
+Private machine-readable reports, overlays and reference reproductions remain under ignored `output/verification/companies/`. Only fictional demos belong in application screenshots or shared examples. Original PDFs/ZIPs, Illustrator metadata and private QA employee values are not in the Git or Vercel source package.
+
+### Remaining limits
+
+Double Leaf has no verified general office phone, so its configuration remains empty and no main-company number is added to its QR. A selected employee number can print normally. Physical proof scanning and Illustrator PDF open/re-save checks remain unperformed; use a 100%-scale print proof before a bulk run. Supplied fonts remain server-only and glyph coverage is enforced; unsupported scripts block export. This release retains the existing deployment audience and adds no authentication, database or unrelated features.

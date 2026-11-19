@@ -10,7 +10,7 @@ export const DESIGN = Object.freeze({
   qr: { x: 71.568731, y: 7.162445, size: 14.661094, quietModules: 4, minModuleMm: .16, warnModuleMm: .22, errorCorrection: 'L' as const },
 });
 export type Color = { kind: 'cmyk' | 'rgb' | 'spot'; values?: number[]; rgb: number[]; name?: string; lab?: number[]; tint?: number };
-export type VectorPath = { d: string; color: Color; bounds?: number[]; sourceIndex?: number };
+export type VectorPath = { d: string; color: Color; bounds?: number[]; sourceIndex?: number; paint?: 'fill'|'stroke'|'fillStroke'; strokeColor?: Color; strokeWidth?: number; lineCap?: number; lineJoin?: number };
 export type Scene = { widthMm: number; heightMm: number; paths: VectorPath[] };
 export const BLACK: Color = { kind: 'cmyk', values: [0,0,0,1], rgb: [0,0,0] };
 export const WHITE: Color = { kind: 'cmyk', values: [0,0,0,0], rgb: [1,1,1] };

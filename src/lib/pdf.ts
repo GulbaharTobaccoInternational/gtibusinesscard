@@ -1,4 +1,4 @@
-import { PDFDocument, PDFDict, PDFOperatorNames, PDFName, PDFNumber, PDFOperator, pushGraphicsState, popGraphicsState, concatTransformationMatrix, moveTo, lineTo, appendBezierCurve, closePath, fill, setFillingColor, cmyk, rgb, type PDFPage } from 'pdf-lib';
+import { PDFDocument, PDFDict, PDFOperatorNames, PDFName, PDFNumber, PDFOperator, pushGraphicsState, popGraphicsState, concatTransformationMatrix, moveTo, lineTo, appendBezierCurve, closePath, fill, setFillingColor, setStrokingColor, setLineWidth, setLineCap, setLineJoin, stroke, fillAndStroke, cmyk, rgb, type PDFPage } from 'pdf-lib';
 import { MM_TO_PT, type Color, type Scene } from './design';
 function pdfColor(page: PDFPage, color: Color): PDFOperator[] {
   if (color.kind==='spot') {
@@ -35,16 +35,20 @@ export function vectorOperators(d: string): PDFOperator[] {
   }
   return operations;
 }
-export async function scenesToPdf(scenes: Scene[], kind: 'print'|'digital'='print'): Promise<Uint8Array> {
+export async function scenesToPdf(scenes: Scene[], kind: 'print'|'digital'='print', title='Gulbahar Business Card'): Promise<Uint8Array> {
   const doc=await PDFDocument.create();
-  doc.setTitle('Gulbahar Business Card');doc.setCreator('Gulbahar Business Card Generator');doc.setProducer('Gulbahar vector engine');
+  doc.setTitle(title);doc.setCreator('Business Card Generator');doc.setProducer('Business card vector engine');
   for(const scene of scenes){
     const page=doc.addPage([scene.widthMm*MM_TO_PT,scene.heightMm*MM_TO_PT]);
     page.setTrimBox(0,0,page.getWidth(),page.getHeight());page.setBleedBox(0,0,page.getWidth(),page.getHeight());
     page.pushOperators(pushGraphicsState(),concatTransformationMatrix(MM_TO_PT,0,0,-MM_TO_PT,0,page.getHeight()));
     for(const path of scene.paths){
       const color=kind==='digital'?{...path.color,kind:'rgb' as const,values:path.color.rgb}:path.color;
-      page.pushOperators(...pdfColor(page,color),...vectorOperators(path.d),fill());
+      if (path.paint==='stroke'||path.paint==='fillStroke') {
+        const s=path.strokeColor??path.color, v=kind==='digital'?s.rgb:(s.values??s.rgb);
+        const value=kind!=='digital'&&s.kind==='cmyk'?cmyk(v[0],v[1],v[2],v[3]):rgb(v[0],v[1],v[2]);
+        page.pushOperators(...pdfColor(page,color),setStrokingColor(value),setLineWidth(path.strokeWidth??0),setLineCap(path.lineCap??0),setLineJoin(path.lineJoin??0),...vectorOperators(path.d),path.paint==='stroke'?stroke():fillAndStroke());
+      } else page.pushOperators(...pdfColor(page,color),...vectorOperators(path.d),fill());
     }
     page.pushOperators(popGraphicsState());
   }

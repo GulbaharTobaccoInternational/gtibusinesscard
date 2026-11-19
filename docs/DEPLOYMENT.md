@@ -1,13 +1,13 @@
 # Deployment preparation
 
-The application is locally functional. Its source repository is [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Vercel project `gtibc` builds the `main` branch and uses its existing deployment protection. Its production alias is https://gtibc-gulbahar-tobacco-internationals-projects.vercel.app.
+The application is locally functional. Its source repository is [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Vercel project `gtibc` builds the `main` branch and uses its existing deployment protection. Its production alias is https://gtibc-kappa.vercel.app.
 
 ## Vercel
 
 1. Use Node.js 24.x, matching `package.json` and the project runtime. Select Next.js and use the repository root (`.`) as the deployment root. If deploying the original local asset workspace instead, select its `gulbahar-card-generator` subdirectory.
 2. In the project’s Environment Variables, configure `GULBAHAR_FONT_KEY` as a Secret for Production and Preview. Use the matching 64-character hexadecimal key from the administrator’s ignored `.env.fonts.local` file or secret manager. Never put its value in Git, screenshots, logs, or a `NEXT_PUBLIC_` variable. The encrypted bundle `private/assets/gotham-fonts.enc.json` is included in Git; prebuild decrypts it into server-only font files and checks their original SHA-256 hashes. Unencrypted fonts remain Git-ignored.
 3. Install with `npm ci`, build with `npm run build`. `vercel.json` sets these commands. Prebuild runs `prepare:assets` before Next.js. It restores missing fonts using the Secret and verifies every approved asset. It fails with an actionable message if the key is missing, wrong, or the artwork is altered; it never substitutes a font.
-4. `next.config.ts` explicitly includes `private/assets/*` in server output tracing. Verify both fonts and artwork are present in the final server bundle.
+4. `next.config.ts` explicitly includes `private/assets/*` in server output tracing. Verify all five fonts and both companies’ artwork are present in the final server bundle.
 5. Configure staff-only access before opening production to employees. Protect the UI and **both API routes** using the organization's identity provider and a trusted access proxy, or a properly authorized SSO integration. For Vercel, use a deployment protection configuration that actually restricts the intended staff audience; a shared public URL is insufficient.
 6. Serve over HTTPS. Apply request/rate limits at the authenticated edge. No app password or frontend secret should be added.
 7. Run the sample flow, export all formats, inspect the two PDF page sizes, decode the QR and obtain the printing supplier's physical proof approval.
@@ -29,7 +29,7 @@ Run `npm ci`, provision private fonts, `npm run build`, then `npm start` behind 
 
 ## Dependency status
 
-Production dependencies were checked with `npm audit --omit=dev`: zero advisories at verification time. The full development set reports a picomatch ReDoS advisory (GHSA-fc5q-39xc-vjpf), propagated through lint tooling. npm's current registry supplies 4.0.7 as latest, and the advisory covers that version. Do not downgrade Next.js to npm audit's suggested old major. This dependency does not process employee inputs at runtime. Update lint dependencies when a patched upstream release becomes available. The audit JSON is recorded under `docs/`.
+At the two-company release verification on 19 November 2026, `npm audit` reported zero vulnerabilities across the installed production and development dependencies. Audit results are time-specific; update dependencies through the normal reviewed process.
 
 ## Print configuration
 
@@ -37,7 +37,7 @@ Default artwork, page and trim are all 92 × 57 mm. Additional bleed is zero and
 
 ## Diagnosing the initial Git build failure
 
-The initial Git-based Vercel build could not find `Gotham-Bold.otf` because licensed fonts were correctly excluded from the public repository, but the build had no provisioning step. The encrypted bundle plus `GULBAHAR_FONT_KEY` now supplies both exact fonts before Next.js builds. The previous open-ended Node range also selected Node 26; the project now pins Node 24.x. The npm `cache-dir`, lint deprecation and optional install-script notices were not the cause of that failed build.
+The initial Git-based Vercel build could not find `Gotham-Bold.otf` because licensed fonts were correctly excluded from the public repository, but the build had no provisioning step. The encrypted bundle plus `GULBAHAR_FONT_KEY` now supplies all five exact company fonts before Next.js builds. The previous open-ended Node range also selected Node 26; the project now pins Node 24.x. The npm `cache-dir`, lint deprecation and optional install-script notices were not the cause of that failed build.
 
 For a new deployment target, set the same build Secret and redeploy. For a local source archive with no fonts, run `npm run prepare:assets` with that environment variable set, or install the licensed fonts with `npm run install:assets`. Keep `.env.fonts.local` private; it is excluded from both Git and Vercel source uploads.
 

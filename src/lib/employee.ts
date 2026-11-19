@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { CompanyId } from './company';
 export const phoneKeys = ['mobile', 'workPhone', 'companyMobile', 'privatePhone', 'additionalPhone', 'workFax', 'privateFax'] as const;
 export type PhoneKey = typeof phoneKeys[number];
 const shortText = z.string().trim().max(160).refine(v => !/[\u0000-\u001f\u007f]/u.test(v), 'Use a single line without control characters.');
@@ -8,7 +9,7 @@ export const employeeSchema = z.object({
   mobile: phone, workPhone: phone, companyMobile: phone, privatePhone: phone,
   additionalPhone: phone, workFax: phone, privateFax: phone,
   extension: z.string().trim().max(8),
-  primaryMobile: z.enum(['mobile', 'companyMobile', 'privatePhone', 'additionalPhone', 'none']),
+  primaryMobile: z.enum(['mobile', 'companyMobile', 'privatePhone', 'additionalPhone', 'workPhone', 'none']),
   includeQr: z.boolean(), includeCompanyPhone: z.boolean(),
 });
 export type Employee = z.infer<typeof employeeSchema>;
@@ -18,7 +19,7 @@ export const EMPTY_EMPLOYEE: Employee = {
   privatePhone: '', additionalPhone: '', workFax: '', privateFax: '', extension: '',
   primaryMobile: 'mobile', includeQr: true, includeCompanyPhone: true,
 };
-export function validateEmployee(employee: Employee): Issue[] {
+export function validateEmployee(employee: Employee, companyId: CompanyId = 'gti'): Issue[] {
   const issues: Issue[] = [];
   const add = (field: keyof Employee, message: string) => issues.push({ field, message, severity: 'error', code: `invalid-${field}` });
   for (const field of ['firstName', 'lastName', 'designation', 'email'] as const) {
@@ -33,7 +34,7 @@ export function validateEmployee(employee: Employee): Issue[] {
   }
   if (employee.extension && !/^\d{1,8}$/.test(employee.extension)) add('extension', 'Use up to 8 digits for the extension.');
   if (employee.extension && !employee.workPhone) add('extension', 'Add a work phone before entering an extension.');
-  if (employee.primaryMobile !== 'none' && !employee[employee.primaryMobile] && phoneKeys.some(k => ['mobile','companyMobile','privatePhone','additionalPhone'].includes(k) && employee[k])) {
+  if (employee.primaryMobile !== 'none' && !employee[employee.primaryMobile] && phoneKeys.some(k => (['mobile','companyMobile','privatePhone','additionalPhone'].includes(k)||(companyId==='doubleLeaf'&&k==='workPhone')) && employee[k])) {
     add('primaryMobile', 'Select an available number to print, or choose no printed mobile.');
   }
   return issues;

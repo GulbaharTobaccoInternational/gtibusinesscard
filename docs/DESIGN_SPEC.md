@@ -51,7 +51,7 @@ Lab white point: 0.964203, 1, 0.824905. Function type 2 with original tint endpo
 
 ## QR and company data
 
-Both supplied QR SVGs and the PDF QR were decoded. Liwaa's reference establishes state `إمارة دبيّ`; the second sample uses a different address/state spelling. The centrally configured Liwaa state is the chosen authority. The new contact uses proper CRLF vCard 3.0 lines, UTF-8-safe 75-octet folding and escaped values, rather than copying inconsistent old serialization.
+Both supplied QR SVGs and the PDF QR were decoded. The approved reference establishes state `إمارة دبيّ`; the second sample uses a different address/state spelling. The centrally configured GTI state is the chosen authority. The new contact uses proper CRLF vCard 3.0 lines, UTF-8-safe 75-octet folding and escaped values, rather than copying inconsistent old serialization.
 
 QR error correction is L, with square black modules and a four-module quiet zone. The baseline sample generates 73 active modules, 0.200837 mm per module at the approved size. Below 0.22 mm a printed-proof warning is required; below 0.16 mm export with QR is blocked. These are conservative application heuristics, not a claim of universal camera or printer certification. No external QR service is contacted.
 

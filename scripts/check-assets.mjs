@@ -9,4 +9,4 @@ for(const [name,expected] of Object.entries(manifest)){
   const actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
   if(actual!==expected)throw new Error(`Official asset differs from the approved source: ${name}. Review and regenerate the design specification before updating its manifest.`);
 }
-console.log('Official artwork and both Gotham fonts match the approved asset manifest.');
+console.log('Official artwork and all company fonts match the approved asset manifest.');

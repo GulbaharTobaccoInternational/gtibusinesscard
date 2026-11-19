@@ -1,9 +1,12 @@
 import QRCode from 'qrcode';
-import { BLACK, WHITE, DESIGN, rectangle, type VectorPath } from './design';
+import { BLACK, WHITE, rectangle, type VectorPath } from './design';
 import { type Employee, type Issue } from './employee';
 import { serializeVCard } from './vcard';
-export function createQr(employee: Employee) {
-  const payload = serializeVCard(employee);
+import { getTemplate } from './templates';
+import type { CompanyId } from './company';
+export function createQr(employee: Employee, companyId: CompanyId = 'gti') {
+  const DESIGN = getTemplate(companyId).design;
+  const payload = serializeVCard(employee, companyId);
   const code = QRCode.create([{ data: Buffer.from(payload, 'utf8'), mode: 'byte' }], { errorCorrectionLevel: DESIGN.qr.errorCorrection });
   const modules = code.modules.size;
   const moduleMm = DESIGN.qr.size / modules;

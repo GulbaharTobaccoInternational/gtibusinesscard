@@ -1,5 +1,9 @@
 {
   "source-artwork.json": "f21a4451bd4ab03c81bae23a6da0e7ea022facb4ecd079fdad287489c9b20c9c",
   "Gotham-Bold.otf": "d7766b0c71e2ef4fd5d4238b8dca14425051ecc7729459bc9c7eeac915909a0f",
-  "GothamBook.ttf": "742359d475131a75ff057224151c7b384ef0b89556212709a5e34a9409983876"
+  "GothamBook.ttf": "742359d475131a75ff057224151c7b384ef0b89556212709a5e34a9409983876",
+  "source-artwork-double-leaf.json": "ccde81eefe97bce4ea19d77707fa9d62cb646f520c4e6a597232be77d7a3598a",
+  "KULDIPA2.TTF": "f2f19cd806b4ded15328dc6c71a146726298cf803e8370ca34422b677fb2a83e",
+  "GeneralSans-Semibold.otf": "6ad3ed9661df911b511135f494805704dea322dc2ae10a9620764f56df39c30b",
+  "GeneralSans-Regular.otf": "f5cfd05c1dafa77e944670528a81958f7c21b7517bafd2a8796a3aa17e56b9ce"
 }

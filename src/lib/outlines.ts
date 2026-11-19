@@ -1,7 +1,7 @@
 import type { Font } from 'fontkit';
 import type { VectorPath, Color } from './design';
 const round = (value: number) => Number(value.toFixed(6));
-export function textOutlines(text: string, font: Font, options: { x?: number; right?: number; baseline: number; size: number; trackingEm: number; color: Color }) {
+export function textOutlines(text: string, font: Font, options: { x?: number; right?: number; baseline: number; size: number; trackingEm: number; color: Color; strokeWidth?: number }) {
   const run = font.layout(text);
   const scale = options.size / font.unitsPerEm;
   const tracking = options.trackingEm * options.size;
@@ -23,7 +23,7 @@ export function textOutlines(text: string, font: Font, options: { x?: number; ri
       if (!operator) throw new Error('Unsupported font outline command.');
       commands.push(operator + args.join(' '));
     }
-    if (commands.length) paths.push({ d: commands.join(' '), color: options.color });
+    if (commands.length) paths.push({ d: commands.join(' '), color: options.color, ...(options.strokeWidth?{paint:'fillStroke' as const,strokeColor:options.color,strokeWidth:options.strokeWidth}: {}) });
     cursor += position.xAdvance * scale + tracking;
   });
   return { paths, width, missing, left: options.right !== undefined ? options.right-width : options.x ?? 0 };

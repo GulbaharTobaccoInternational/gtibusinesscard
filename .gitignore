@@ -5,8 +5,8 @@ node_modules/
 !.env.example
 *.tsbuildinfo
 output/
-private/assets/*.otf
-private/assets/*.ttf
+private/assets/*.[oO][tT][fF]
+private/assets/*.[tT][tT][fF]
 docs/source-analysis/*-stream.txt
 docs/source-analysis/*-resources.txt
 docs/source-analysis/reference-*.png
