@@ -1,6 +1,6 @@
 # Deployment preparation
 
-The application is locally functional. Its source repository is [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). A live hosted deployment has not been published.
+The application is locally functional. Its source repository is [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Vercel project `gtibc` builds the `main` branch and uses its existing deployment protection. Its production alias is https://gtibc-gulbahar-tobacco-internationals-projects.vercel.app.
 
 ## Vercel
 
@@ -40,3 +40,5 @@ Default artwork, page and trim are all 92 × 57 mm. Additional bleed is zero and
 The initial Git-based Vercel build could not find `Gotham-Bold.otf` because licensed fonts were correctly excluded from the public repository, but the build had no provisioning step. The encrypted bundle plus `GULBAHAR_FONT_KEY` now supplies both exact fonts before Next.js builds. The previous open-ended Node range also selected Node 26; the project now pins Node 24.x. The npm `cache-dir`, lint deprecation and optional install-script notices were not the cause of that failed build.
 
 For a new deployment target, set the same build Secret and redeploy. For a local source archive with no fonts, run `npm run prepare:assets` with that environment variable set, or install the licensed fonts with `npm run install:assets`. Keep `.env.fonts.local` private; it is excluded from both Git and Vercel source uploads.
+
+Keep `tests/` available in the Vercel build source: the verification scripts import its sample fixture and Next.js type-checks those scripts. These files are not public web routes or browser assets. Ignoring the fixture folder makes production type checking fail even when the fonts are correctly installed.

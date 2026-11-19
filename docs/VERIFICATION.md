@@ -1,6 +1,6 @@
 # Verification record
 
-Executed on 18 November 2026 in the supplied macOS workspace. All checks below were actually run. The application is prepared for deployment and running locally; staff authentication and a hosted deployment were not configured because no identity provider or deployment credentials were supplied.
+Executed on 18 November 2026 in the supplied macOS workspace. All checks below were actually run. At that initial verification, the application ran locally; a hosted deployment was not yet configured. The Vercel build repair below records the subsequent deployment setup.
 
 ## Automated checks
 
@@ -74,3 +74,5 @@ The first Git deployment failed at `check:assets` because the public repository 
 The build now uses Node 24.x and runs `prepare:assets` before Next.js. A committed AES-256-GCM encrypted font bundle is unlocked with the private `GULBAHAR_FONT_KEY` Vercel Secret; every restored font must match the original integrity manifest. Wrong keys, modified ciphertext and unapproved fonts are rejected. Plain font binaries and the local key file remain excluded from Git.
 
 Executed after the change: lint and strict TypeScript passed; all 25 automated tests passed, including six provisioning/security regression tests. A clean snapshot exported from Git's index, without plaintext fonts or a local secret file, restored both exact Gotham fonts and completed the production build using the environment Secret. Its browser assets were scanned to verify that the key value was not included.
+
+The Vercel source package also retains `tests/` so the fixture imports used by verification scripts resolve during Next.js type checking. A second clean-source production build applied every `.vercelignore` exclusion and passed before pushing this packaging correction.

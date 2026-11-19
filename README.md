@@ -78,7 +78,7 @@ See [the verification record](docs/VERIFICATION.md) for executed results, thresh
 
 ## Deploy
 
-The source is maintained in [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). The app is prepared for Vercel and conventional Node hosting; a live deployment has not been published. See [deployment instructions](docs/DEPLOYMENT.md).
+The source is maintained in [GulbaharTobaccoInternational/gtibusinesscard](https://github.com/GulbaharTobaccoInternational/gtibusinesscard). Vercel project `gtibc` deploys the `main` branch. The [production application](https://gtibc-gulbahar-tobacco-internationals-projects.vercel.app) uses the project’s existing deployment protection. Conventional Node hosting is also supported. See [deployment instructions](docs/DEPLOYMENT.md).
 
 A Git/Vercel build needs the `GULBAHAR_FONT_KEY` Secret to restore the encrypted fonts; no database is required. Local use with fonts already installed does not require this secret. Protect **all routes**, including `/api/render` and `/api/export`, with corporate SSO or a staff-restricted access proxy before making it available online. The UI's internal-tool label is not authentication. No identity provider or credentials were supplied, so no login system or passwords have been invented.
 
