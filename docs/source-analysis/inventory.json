@@ -1,0 +1,174 @@
+[
+  {
+    "path": "Business Card Template.pdf",
+    "bytes": 429710,
+    "sha256": "1dbd42a1f2da84c81275398a3ae6ddf0ba9bec52a92be3a4424a9f18a1489229"
+  },
+  {
+    "path": "Color Code  #ea0029.pdf",
+    "bytes": 6618,
+    "sha256": "97616328b1be598b32efd44f35616920c2c3e9c97494fe064d68dbdb97952ba6"
+  },
+  {
+    "path": "Sample B Cards/Mr Liwaa Sahib Bussiness Card.pdf",
+    "bytes": 561816,
+    "sha256": "f3579dcf37d34bbafcf9063bb876d4ec99b47c4036d0682716fd207fccae572e"
+  },
+  {
+    "path": "Sample B Cards/Mr Abbas Jameel Ahmed Bussiness Card.pdf",
+    "bytes": 583314,
+    "sha256": "dfc313f955858c4998bf90618e294807f1c6990c09d0e53cade06a5075e770f2"
+  },
+  {
+    "path": "B Card Fonts/Gotham-Bold.otf",
+    "bytes": 30012,
+    "sha256": "d7766b0c71e2ef4fd5d4238b8dca14425051ecc7729459bc9c7eeac915909a0f",
+    "family": "Gotham",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "B Card Fonts/GothamBook.ttf",
+    "bytes": 56676,
+    "sha256": "742359d475131a75ff057224151c7b384ef0b89556212709a5e34a9409983876",
+    "family": "Gotham",
+    "fsType": 0,
+    "codepoints": 225
+  },
+  {
+    "path": "B Card Dimentions/Business Card Template.png",
+    "bytes": 86588,
+    "sha256": "929acca7e32907774c02c0278f9b79ab5ea5f40b2bed9d8deae4a18aae4e7e99"
+  },
+  {
+    "path": "B Card Dimentions/Business Card Dimentions-02.png",
+    "bytes": 12427,
+    "sha256": "d0ae60d851fa799c562095b1bed790059116fa4de370ba1ff280a2dbe490f529"
+  },
+  {
+    "path": "B Card Dimentions/Business Card Dimentions-01.png",
+    "bytes": 67483,
+    "sha256": "11fcd7bb19f9e83db9c7f7a5cf85f04be7cc28e71e27390b9c453c26c3a2794b"
+  },
+  {
+    "path": "SVG's/G Logo.svg",
+    "bytes": 751,
+    "sha256": "5c9403fd0283324513caec93854461ed1ece42cec58c74f10e67a934fb1a411d"
+  },
+  {
+    "path": "SVG's/GTI Logo B Card.svg",
+    "bytes": 8077,
+    "sha256": "e7e93efb820e37aed41ea6532f7947f9df33b8b0273ea095cfa040f69da50815"
+  },
+  {
+    "path": "SVG's/Gulbahar Logo B Card.svg",
+    "bytes": 2636,
+    "sha256": "275b80fdb6f0b55c2b8866e183d2acb1476a2f1dbad3298a3101eb7505f2501e"
+  },
+  {
+    "path": "Fonts/Gotham-XLight.otf",
+    "bytes": 30444,
+    "sha256": "990c214996948c053291097269fe473bce20da0edb9fdc94b5f9fc0007f6a4b8",
+    "family": "Gotham XLight",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-Thin.otf",
+    "bytes": 30412,
+    "sha256": "80cc8ef5083239b68a12bff0d34ce0fd015791a72ef9c173417edc29d95da6e8",
+    "family": "Gotham Thin",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-Black.otf",
+    "bytes": 30608,
+    "sha256": "0826047154e04ac9b85a0369e2654594aa3211ad757f604ac848071da8069786",
+    "family": "Gotham Black",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-XLightItalic.otf",
+    "bytes": 32124,
+    "sha256": "2c45e74cce9fe81665e6c2bb3c73c6c2f053b61c50bc60093882e36116b63bb0",
+    "family": "Gotham XLight",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-UltraItalic.otf",
+    "bytes": 31504,
+    "sha256": "6bec80c774c2e7b1a3c1bbe638bc00b0b11734444bcba48712357143b15bcc96",
+    "family": "Gotham Ultra",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham Medium.otf",
+    "bytes": 128768,
+    "sha256": "e8183507b37f3df80ea253b144745ed58784f5b4465b5216fbf9e314df592d06",
+    "family": "Gotham Medium",
+    "fsType": 4,
+    "codepoints": 344
+  },
+  {
+    "path": "Fonts/Gotham-Bold.otf",
+    "bytes": 30012,
+    "sha256": "d7766b0c71e2ef4fd5d4238b8dca14425051ecc7729459bc9c7eeac915909a0f",
+    "family": "Gotham",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-ThinItalic.otf",
+    "bytes": 32720,
+    "sha256": "cb776d9e93ea04822ab2c828087e2007e2a488662f498cf1238affc93d2c5739",
+    "family": "Gotham Thin",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-ExtraLight.otf",
+    "bytes": 161604,
+    "sha256": "0889045208ef71ebc6ae97981f10c939cf5b327a86858dee558084b445aa1f6f",
+    "family": "Gotham Extra Light",
+    "fsType": 4,
+    "codepoints": 387
+  },
+  {
+    "path": "Fonts/Gotham-Light.otf",
+    "bytes": 29656,
+    "sha256": "059d87195ac799babfa43fc443028f8dfbfec34e0887f69999b63610ec9a3631",
+    "family": "Gotham Light",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/Gotham-BookItalic.otf",
+    "bytes": 31068,
+    "sha256": "a7fc427ff179e66e7c373b48fef6040528bcfe20f99dddc59bd0a4de033a98b2",
+    "family": "Gotham Book",
+    "fsType": 0,
+    "codepoints": 223
+  },
+  {
+    "path": "Fonts/GothamBook.ttf",
+    "bytes": 56676,
+    "sha256": "742359d475131a75ff057224151c7b384ef0b89556212709a5e34a9409983876",
+    "family": "Gotham",
+    "fsType": 0,
+    "codepoints": 225
+  },
+  {
+    "path": "Sample V Card QR Codes/qr-code (9).svg",
+    "bytes": 314127,
+    "sha256": "0aaca2e179be991896e322045eeb8539ff93d0f13f7edc7eb8769c1c591d9ef2"
+  },
+  {
+    "path": "Sample V Card QR Codes/qr-code (10).svg",
+    "bytes": 355589,
+    "sha256": "1197f3abf34fcb1e5533f5cfb850b055056704582b407f269538154ae9adb10d"
+  }
+]
