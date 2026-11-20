@@ -32,3 +32,12 @@ QA_BROWSER=1 node --import tsx scripts/verify-password-access.mjs
 ```
 
 The optional browser mode uses the separately installed QA Playwright runtime (`QA_PLAYWRIGHT_MODULE` can select it), without adding a production dependency. `QA_URL` selects the deployment under test; a protected Vercel preview uses a temporary same-project OIDC session with origin-scoped headers. The script exercises temporary existing-user setup, new invitations, resets, old-password rejection, expired/reused links, disabled accounts, RLS/company/admin restrictions, and both-company exports. Real SMTP tests use Resend's documented delivered test mailbox. Temporary passwords stay in process memory; accounts and cookie files are removed in `finally`. Actual inbox receipt and initial-administrator access require recipient confirmation.
+
+## Branded authentication emails
+
+| Supabase Auth template | Subject | HTML source |
+| --- | --- | --- |
+| Invite user | Welcome to Mr Ghashi — Set Up Your Account | [invite.html](../supabase/templates/invite.html) |
+| Reset password | Reset Your Mr Ghashi Password | [recovery.html](../supabase/templates/recovery.html) |
+
+The email PNGs under `public/brand/email/` use the complete approved Mr Ghashi V3 artwork and original black GTI vector. Publish the images on www.mrghashi.com before updating these two subjects and HTML bodies in Supabase Auth. Read back both settings after publishing. Vercel serves the images and Supabase controls which template is sent.
