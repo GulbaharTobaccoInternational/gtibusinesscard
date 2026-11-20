@@ -289,9 +289,16 @@ button svg { flex:none; }
 }
 .app-header .app-brand { grid-area:brand; width:100%; }
 .app-header .mr-ghashi-brand { width:100%; max-width:none; }
-.app-header .ownership-group { grid-area:ownership; place-self:start end; gap:14px; }
+.app-header .ownership-group {
+  grid-area:ownership; place-self:start end; gap:14px;
+  /* Use the extra desktop row space while keeping the compact header height. */
+  padding-block-start:clamp(0px, (100vw - 64rem) / 8, 11px);
+}
 .app-header .ownership-logo { width:clamp(48px,4.1vw,64px); height:auto; }
-.app-header .department-credit { max-width:none; font-size:1rem; font-weight:500; line-height:1.26; }
+.app-header .department-credit {
+  /* Retain the two-line lockup's width when the lettering becomes lighter. */
+  min-inline-size:13.762em; max-width:none; font-size:1rem; font-weight:400; line-height:1.26;
+}
 .department-credit>span { display:block; }
 .app-header .appreciation-banner { grid-area:appreciation; justify-self:end; border:0; }
 .app-header .appreciation-inner { padding:0; gap:clamp(18px,2.2vw,34px); justify-content:flex-end; align-items:last baseline; }
