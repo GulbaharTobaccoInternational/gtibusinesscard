@@ -1,4 +1,4 @@
-import { passwordEmailSchema, RESET_CONFIRMATION, SETUP_CONFIRMATION } from '@/lib/password-auth';
+import { passwordEmailSchema, PASSWORD_EMAIL_CONFIRMATION } from '@/lib/password-auth';
 import { readPrivateJson, PRIVATE_HEADERS, RequestError } from '@/lib/http';
 import { findAuthorizedEmail, privateError, requireSameOrigin } from '@/server/access';
 import { sendPasswordEmail, takePasswordEmailQuota } from '@/server/password-auth';
@@ -13,6 +13,6 @@ export async function POST(request:Request){
     await takePasswordEmailQuota(email);
     const user=await findAuthorizedEmail(email);
     if(user?.status==='active')await sendPasswordEmail(user,intent);
-    return Response.json({ok:true,message:intent==='setup'?SETUP_CONFIRMATION:RESET_CONFIRMATION,resendAfter:60},{headers:PRIVATE_HEADERS});
+    return Response.json({ok:true,message:PASSWORD_EMAIL_CONFIRMATION,resendAfter:60},{headers:PRIVATE_HEADERS});
   }catch(error){return privateError(error);}
 }

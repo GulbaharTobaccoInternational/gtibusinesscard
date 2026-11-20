@@ -3,8 +3,7 @@ import { emailSchema } from './access';
 
 import { PASSWORD_MIN_LENGTH } from './password-policy';
 export { PASSWORD_MIN_LENGTH } from './password-policy';
-export const RESET_CONFIRMATION="If your email is registered, you'll receive password reset instructions.";
-export const SETUP_CONFIRMATION="If your email is approved, you'll receive secure password setup instructions.";
+export const PASSWORD_EMAIL_CONFIRMATION = 'Your request has been received. If your email address is approved, you should receive a secure link within a few seconds to a few minutes, depending on your email provider. Please also check your Junk or Spam folder.';
 export const CREDENTIALS_ERROR='The email address or password is incorrect.';
 export const passwordLoginSchema=z.object({email:emailSchema,password:z.string().min(1).max(128)}).strict();
 export const passwordEmailSchema=z.object({email:emailSchema,intent:z.enum(['setup','reset']).default('reset')}).strict();
