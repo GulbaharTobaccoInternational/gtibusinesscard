@@ -289,7 +289,8 @@ button svg { flex:none; }
 .app-header .ownership-logo { width:clamp(48px,4.1vw,64px); height:auto; }
 .app-header { --header-label-size:.85rem; overflow-x:clip; }
 .app-header .department-credit,.app-header .reaction-button { font-family:inherit; font-size:var(--header-label-size); font-weight:400; }
-.app-header .department-credit { max-width:none; line-height:1.26; white-space:nowrap; }
+/* Keep the original two-line row height above the reactions as the label gets smaller. */
+.app-header .department-credit { display:grid; align-content:center; min-block-size:2.52rem; max-width:none; line-height:1.26; white-space:nowrap; }
 .department-credit>span { display:block; }
 .app-header .appreciation-banner { grid-area:appreciation; justify-self:end; border:0; }
 .app-header .appreciation-inner { padding:0; gap:clamp(18px,2.2vw,34px); justify-content:flex-end; align-items:last baseline; }
@@ -427,7 +428,7 @@ button svg { flex:none; }
 @media(max-width:680px) {
   .app-header .header-inner { grid-template-columns:minmax(0,1fr); grid-template-areas:'brand' 'ownership' 'appreciation'; padding:12px 20px 16px; gap:10px; }
   .app-header .app-brand { width:230px; justify-self:center; }.app-header .mr-ghashi-brand { max-width:none; }
-  .app-header { --header-label-size:.8125rem; }.app-header .ownership-group { justify-self:end; gap:11px; }.app-header .ownership-logo { width:34px; }.app-header .department-credit { line-height:1.45; }
+  .app-header { --header-label-size:.8125rem; }.app-header .ownership-group { justify-self:end; gap:11px; }.app-header .ownership-logo { width:34px; }.app-header .department-credit { min-block-size:0; line-height:1.45; }
   .app-header .appreciation-banner { width:100%; }.app-header .appreciation-inner { flex-direction:column; align-items:stretch; gap:6px; }.app-header .appreciation-copy { text-align:center; }.app-header .appreciation-copy h2 { font-size:1.125rem; margin-bottom:3px; }.app-header .appreciation-copy p { font-size:.875rem; }.app-header .reaction-grid { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }.app-header .reaction-art { width:50px; }.app-header .reaction-button { padding:4px 2px; }
   .main-shell { padding-top:20px; }.session-bar { align-items:flex-start; font-size:.875rem; }.session-actions a,.session-actions button { font-size:.875rem; }.session-actions { gap:12px; }.company-control { gap:7px; }.company-control>span,.workspace-actions .company-control>span { font-size:.875rem; }.company-segments button { min-height:44px; padding:9px 17px; font-size:.9375rem; }.workspace-actions .export-shortcut { padding:10px 12px; min-height:44px; font-size:.875rem; }
   .field input,.field select { height:48px; }.editor-heading h2 { font-size:1.25rem; }.editor-heading p { font-size:.875rem; max-width:none; }.preview-status,.preview-status .text-button { font-size:.875rem; }.primary-export-row .print-button,.digital-button,.png-button { font-size:.9375rem; }.side-option strong { font-size:.9375rem; }.side-option small { font-size:.8125rem; }.advanced-details summary { font-size:1rem; }.qr-info strong { font-size:.875rem; }
