@@ -40,4 +40,4 @@ The optional browser mode uses the separately installed QA Playwright runtime (`
 | Invite user | Welcome to Mr Ghashi — Set Up Your Account | [invite.html](../supabase/templates/invite.html) |
 | Reset password | Reset Your Mr Ghashi Password | [recovery.html](../supabase/templates/recovery.html) |
 
-The email PNGs under `public/brand/email/` use the complete approved Mr Ghashi V3 artwork and original black GTI vector. Publish the images on www.mrghashi.com before updating these two subjects and HTML bodies in Supabase Auth. Read back both settings after publishing. Vercel serves the images and Supabase controls which template is sent.
+The light email uses `mr-ghashi-white.png` and the transparent black `gti-ink-black.png`. The dark email uses `mr-ghashi-dark.png` and the transparent white `gti-ink-white.png`. Clients without theme switching receive the light logos by default. Publish all referenced PNGs from `public/brand/email/` on www.mrghashi.com before updating the two HTML bodies in Supabase Auth. Read back both settings after publishing. Vercel serves the images and Supabase controls which template is sent.

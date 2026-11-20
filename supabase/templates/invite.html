@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="supported-color-schemes" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <title>Welcome to Mr Ghashi — Set Up Your Account</title>
   <style>
-    :root { color-scheme: only light; supported-color-schemes: light; }
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
     table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { -ms-interpolation-mode: bicubic; }
     a:focus { outline: 3px solid #825542; outline-offset: 3px; }
@@ -40,14 +40,40 @@
     .button-cell, .cta { background-color:#c9002c !important; color:#ffffff !important; }
     .cta span { color:#ffffff !important; }
     .site-link { color:#ae0026 !important; }
+    @media (prefers-color-scheme: dark) {
+      .canvas { background-color:#161616 !important; }
+      .card, .paper { background-color:#070809 !important; }
+      .logo-surface { background-image:none !important; }
+      .note, .note-layout, .note-icon, .note-copy { background-color:#262323 !important; }
+      .heading { color:#fff7f2 !important; }
+      .body-copy, .note-copy { color:#f1eae7 !important; }
+      .site-link { color:#ff97aa !important; }
+      .logo-light { display:none !important; }
+      .logo-dark { display:block !important; max-height:none !important; overflow:visible !important; }
+      .hero-dark { width:432px !important; max-width:100% !important; height:auto !important; aspect-ratio:864 / 383; object-fit:contain; color:#ffffff !important; }
+      .gti-dark { width:88px !important; max-width:100% !important; height:60px !important; color:#ffffff !important; }
+    }
+    /* Outlook web and mobile can expose a message-level theme independently of the OS. */
+    [data-ogsc] .canvas, [data-ogsb] .canvas { background-color:#161616 !important; }
+    [data-ogsc] .card, [data-ogsc] .paper, [data-ogsb] .card, [data-ogsb] .paper { background-color:#070809 !important; }
+    [data-ogsc] .logo-surface, [data-ogsb] .logo-surface { background-image:none !important; }
+    [data-ogsc] .note, [data-ogsc] .note-layout, [data-ogsc] .note-icon, [data-ogsc] .note-copy, [data-ogsb] .note, [data-ogsb] .note-layout, [data-ogsb] .note-icon, [data-ogsb] .note-copy { background-color:#262323 !important; }
+    [data-ogsc] .heading, [data-ogsb] .heading { color:#fff7f2 !important; }
+    [data-ogsc] .body-copy, [data-ogsc] .note-copy, [data-ogsb] .body-copy, [data-ogsb] .note-copy { color:#f1eae7 !important; }
+    [data-ogsc] .site-link, [data-ogsb] .site-link { color:#ff97aa !important; }
+    [data-ogsc] .logo-light, [data-ogsb] .logo-light { display:none !important; }
+    [data-ogsc] .logo-dark, [data-ogsb] .logo-dark { display:block !important; max-height:none !important; overflow:visible !important; }
+    [data-ogsc] .hero-dark, [data-ogsb] .hero-dark { width:432px !important; max-width:100% !important; height:auto !important; aspect-ratio:864 / 383; object-fit:contain; color:#ffffff !important; }
+    [data-ogsc] .gti-dark, [data-ogsb] .gti-dark { width:88px !important; max-width:100% !important; height:60px !important; color:#ffffff !important; }
   </style>
 </head>
-<body class="canvas" bgcolor="#faf8f6" style="color-scheme:only light; margin:0; padding:0; background-color:#faf8f6; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+<body class="canvas" bgcolor="#faf8f6" style="color-scheme:light dark; margin:0; padding:0; background-color:#faf8f6; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
   <table role="presentation" class="canvas" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#faf8f6" style="width:100%; table-layout:fixed; background-color:#faf8f6;">
     <tr><td class="outer canvas" align="center" bgcolor="#faf8f6" style="background-color:#faf8f6; padding:26px 12px;">
       <table role="presentation" class="card" width="600" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width:600px; max-width:100%; table-layout:fixed; background-color:#ffffff; border-radius:24px; font-family:Arial,Helvetica,sans-serif; color:#27232c;">
-        <tr><td class="inner brand paper" align="center" bgcolor="#ffffff" style="background-color:#ffffff; border-radius:24px 24px 0 0; padding:14px 32px 22px;">
-          <img src="https://www.mrghashi.com/brand/email/mr-ghashi-white.png" alt="Mr Ghashi — Your Biz Card Genius" width="432" style="display:block; width:432px; max-width:100%; height:auto; border:0; color:#4d271b; font-size:20px; font-weight:bold;">
+        <tr><td class="inner brand paper logo-surface" align="center" bgcolor="#ffffff" style="background-color:#ffffff; background-image:linear-gradient(#ffffff,#ffffff); border-radius:24px 24px 0 0; padding:14px 32px 22px;">
+          <img class="logo-light" src="https://www.mrghashi.com/brand/email/mr-ghashi-white.png" alt="Mr Ghashi — Your Biz Card Genius" width="432" style="display:block; width:432px; max-width:100%; height:auto; border:0; color:#4d271b; font-size:20px; font-weight:bold;">
+          <img class="logo-dark hero-dark" hidden src="https://www.mrghashi.com/brand/email/mr-ghashi-dark.png" alt="Mr Ghashi — Your Biz Card Genius" width="0" height="0" style="display:none; width:0; height:0; max-height:0; overflow:hidden; mso-hide:all; border:0;">
         </td></tr>
         <tr><td class="inner content paper" bgcolor="#ffffff" style="background-color:#ffffff; padding:0 32px;">
           <table class="paper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%; table-layout:fixed; border-top:1px solid #ded3cd;">
@@ -78,8 +104,9 @@
         </td></tr>
         <tr><td class="inner paper" align="center" bgcolor="#ffffff" style="padding:0 32px 22px; background-color:#ffffff; border-radius:0 0 24px 24px;">
           <table class="paper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width:100%; background-color:#ffffff; border-top:1px solid #ded3cd;">
-            <tr><td class="paper" align="center" bgcolor="#ffffff" style="padding:18px 0 0; background-color:#ffffff;">
-              <img src="https://www.mrghashi.com/brand/email/gti-white.png" alt="Gulbahar Tobacco Int’l FZE" width="88" height="60" style="display:block; width:88px; height:60px; border:0; color:#29252e; font-size:12px;">
+            <tr><td class="paper logo-surface" align="center" bgcolor="#ffffff" style="padding:18px 0 0; background-color:#ffffff; background-image:linear-gradient(#ffffff,#ffffff);">
+              <img class="logo-light" src="https://www.mrghashi.com/brand/email/gti-ink-black.png" alt="Gulbahar Tobacco Int’l FZE" width="88" height="60" style="display:block; width:88px; height:60px; border:0; color:#29252e; font-size:12px;">
+              <img class="logo-dark gti-dark" hidden src="https://www.mrghashi.com/brand/email/gti-ink-white.png" alt="Gulbahar Tobacco Int’l FZE" width="0" height="0" style="display:none; width:0; height:0; max-height:0; overflow:hidden; mso-hide:all; border:0;">
             </td></tr>
             <tr><td class="paper" align="center" bgcolor="#ffffff" style="padding:14px 0 0; background-color:#ffffff; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:20px;">
               <a class="site-link" href="https://www.mrghashi.com" style="color:#ae0026; text-decoration:underline;">www.mrghashi.com</a>
