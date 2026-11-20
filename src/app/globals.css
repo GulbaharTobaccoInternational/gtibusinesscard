@@ -279,22 +279,88 @@ button svg { flex:none; }
 @media(max-width:680px) { .session-bar { justify-content:space-between; gap:6px 14px; margin-bottom:16px; }.session-name { max-width:100%; overflow-wrap:anywhere; }.session-actions { gap:12px; }.login-card { padding:28px 24px; border-radius:20px; }.login-card h1 { font-size:26px; }.login-footer { padding:20px 16px; }.admin-header { padding:16px 20px; align-items:center; }.admin-header .mr-ghashi-brand { width:145px; }.admin-header .export-shortcut { white-space:normal; text-align:center; max-width:150px; }.admin-main { padding:18px 20px 40px; }.admin-title h1 { font-size:28px; }.admin-directory-heading { padding:18px; }.admin-directory-heading h2 { font-size:17px; }.admin-table th,.admin-table td { padding:14px 18px; }.admin-directory .print-button { font-size:13px; }.admin-notice { padding-left:18px; padding-right:18px; } }
 
 /* V3: supplied branding, larger interface type, and the password screens. */
-.app-header .header-inner { display:grid; grid-template-columns:minmax(300px,430px) minmax(0,1fr); grid-template-areas:'brand ownership' 'brand appreciation'; gap:18px 36px; padding-top:22px; padding-bottom:22px; align-items:center; }
+.app-header .header-inner {
+  display:grid;
+  grid-template-columns: minmax(230px,31%) minmax(0,1fr);
+  grid-template-areas: "brand ownership" "brand appreciation";
+  align-items:center;
+  gap:12px 32px;
+  padding-block:16px;
+}
 .app-header .app-brand { grid-area:brand; width:100%; }
-.app-header .mr-ghashi-brand { width:100%; max-width:460px; }
-.app-header .ownership-group { grid-area:ownership; justify-self:end; gap:16px; }
-.app-header .ownership-logo { width:62px; }
-.app-header .department-credit { max-width:none; font-size:1rem; line-height:1.5; }
+.app-header .mr-ghashi-brand { width:100%; max-width:none; }
+.app-header .ownership-group { grid-area:ownership; justify-self:end; gap:14px; }
+.app-header .ownership-logo { width:clamp(48px,4.1vw,64px); height:auto; }
+.app-header .department-credit { max-width:none; font-size:1rem; font-weight:500; line-height:1.26; }
 .department-credit>span { display:block; }
-.app-header .appreciation-banner { grid-area:appreciation; justify-self:end; width:100%; border:0; }
-.app-header .appreciation-inner { padding:0; gap:24px; justify-content:flex-end; }
-.app-header .appreciation-copy { flex:1; max-width:310px; }
-.app-header .appreciation-copy h2 { font-size:1.25rem; line-height:1.35; }
-.app-header .appreciation-copy p { font-size:.9375rem; }
-.app-header .reaction-grid { width:360px; gap:6px; }
-.app-header .reaction-art { width:60px; }
-.app-header .reaction-button { padding:4px 3px; font-size:.875rem; white-space:nowrap; }
-.app-header .confetti-burst { overflow:visible; }
+.app-header .appreciation-banner { grid-area:appreciation; justify-self:end; border:0; }
+.app-header .appreciation-inner { padding:0; gap:clamp(18px,2.2vw,34px); justify-content:flex-end; }
+.app-header .appreciation-copy h2 { font-size:1.18rem; line-height:1.3; margin-bottom:6px; }
+.app-header .appreciation-copy p { font-size:.9rem; color:#5a606a; }
+.app-header .reaction-grid { width:auto; grid-template-columns:repeat(4,minmax(68px,1fr)); gap:8px; }
+.app-header .reaction-art { width:52px; }
+.app-header .reaction-button { padding:2px 4px; font-size:.85rem; white-space:nowrap; }
+
+.login-page { background:radial-gradient(ellipse at 92% 5%,#fbefe8,transparent 50%),radial-gradient(ellipse at 8% 96%,#fcf1e9,transparent 48%),#fcf9f8; }
+.auth-composition {
+  width:100%; max-width:1536px; flex:1; margin:auto;
+  display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1fr); align-items:center;
+  gap:clamp(28px,3.5vw,54px); padding:clamp(24px,3vw,46px) clamp(28px,4.8vw,74px) 14px;
+}
+.auth-story { min-width:0; }
+.auth-wordmark { display:block; width:clamp(170px,17vw,250px); margin:0 0 clamp(24px,3.4vw,52px); }
+.auth-wordmark img,.auth-mascot img { display:block; width:100%; height:auto; }
+.auth-wordmark,.auth-mascot { mix-blend-mode:darken; }
+.auth-headline h2 { margin:0; color:#382019; font-size:clamp(34px,3.8vw,58px); line-height:1.1; font-weight:650; letter-spacing:-.045em; }
+.auth-headline h2>span { position:relative; display:inline-block; }
+.auth-headline h2 svg { position:absolute; bottom:-.24em; left:3%; width:62%; height:.24em; fill:none; stroke:#ec1834; stroke-width:3.8; stroke-linecap:round; overflow:visible; }
+.auth-headline>p { max-width:55ch; color:#394250; font-size:clamp(16px,1.23vw,19px); line-height:1.45; margin:26px 0 0; }
+.auth-steps { display:grid; grid-template-columns:1.08fr 1fr .94fr; gap:12px; list-style:none; margin:26px 0 0; padding:0; }
+.auth-steps li { display:flex; align-items:flex-start; gap:9px; font-size:.88rem; line-height:1.35; }
+.auth-steps li+li { border-inline-start:1px solid #d8d2ce; padding-inline-start:12px; }
+.step-number { flex:none; display:grid; place-items:center; width:26px; height:26px; border-radius:50%; background:#d91031; color:#fff; font-weight:600; }
+.auth-steps strong { display:block; color:#252125; font-size:1rem; line-height:1.4; font-weight:600; }
+.auth-steps p { color:#444954; margin:3px 0 0; }
+.auth-mascot { width:min(76%,455px); margin:18px 0 0 4%; }
+.auth-composition .login-card { padding:clamp(28px,2.75vw,42px); border-radius:30px; border:1px solid #e8ded9; box-shadow:0 18px 55px #523a2c0d; }
+.auth-gti-logo { display:block; width:clamp(68px,6.4vw,98px); height:auto; margin:0 0 clamp(28px,3vw,46px) auto; }
+.auth-composition .login-card h1 { font-size:clamp(27px,2.35vw,36px); font-weight:600; letter-spacing:-.04em; line-height:1.2; margin:0 0 16px; }
+.auth-composition .login-description { color:#465264; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.6; margin-bottom:30px; }
+.auth-composition .field label { font-size:1rem; margin-bottom:9px; }
+.auth-composition .field { margin-bottom:20px; }
+.auth-composition .login-card .field input { height:54px; background:#fafafb; border-radius:12px; font-size:1rem; }
+.auth-composition .login-submit { min-height:54px; border-radius:12px; margin-top:20px; font-size:1rem; }
+.auth-composition .login-submit>svg:last-child { color:#ff5367; }
+.auth-composition .login-security,.auth-access-note { font-size:.9375rem; margin:18px 0 0; line-height:1.55; color:#535c69; }
+.login-footer { font-size:.9rem; color:#505966; padding:20px 24px 28px; }
+
+@media (max-width:1100px) {
+  .auth-steps li { flex-direction:column; gap:5px; }
+}
+@media (min-width:681px) and (max-width:960px) {
+  .app-header .header-inner { grid-template-columns:32% 1fr; gap:10px 20px; padding-inline:24px; }
+  .app-header .appreciation-inner { gap:8px; flex-wrap:wrap; }
+  .app-header .appreciation-copy { text-align:right; }
+  .app-header .reaction-grid { gap:4px; }
+  .app-header .reaction-art { width:46px; }
+}
+@media (max-width:840px) {
+  .auth-composition { max-width:650px; grid-template-columns:minmax(0,1fr); gap:24px; padding:20px clamp(16px,4vw,32px) 8px; }
+  .auth-story { display:grid; grid-template-columns:1fr auto; align-items:center; gap:16px; }
+  .auth-wordmark { width:min(100%,170px); margin:0; }
+  .auth-mascot { grid-column:2; grid-row:1; width:clamp(68px,14vw,100px); margin:0; }
+  .auth-headline,.auth-steps { grid-column:1/-1; }
+  .auth-headline h2 { font-size:clamp(30px,6.5vw,40px); }
+  .auth-headline>p { font-size:.95rem; margin-top:18px; }
+  .auth-steps { gap:8px; margin:0; }
+  .auth-steps li { font-size:.8rem; }
+  .auth-steps li+li { padding-inline-start:9px; }
+  .auth-steps strong { font-size:.9rem; }
+  .step-number { width:22px; height:22px; }
+  .auth-composition .login-card { padding:clamp(20px,5vw,32px); border-radius:22px; }
+  .auth-gti-logo { width:62px; margin-bottom:16px; }
+  .login-footer { font-size:.8125rem; }
+}
 .main-shell { padding-top:24px; }
 .company-segments button { min-height:44px; padding:10px 23px; font-size:1rem; }
 .company-control>span { font-size:.9375rem; }
@@ -313,27 +379,6 @@ button svg { flex:none; }
 .session-bar { font-size:.9375rem; margin-bottom:22px; }
 .session-actions a,.session-actions button { font-size:.9375rem; min-height:32px; }
 .page-footer { font-size:.875rem; }
-.login-page { background:radial-gradient(ellipse at 1% 100%,#f9e8d7a6,transparent 40%),radial-gradient(ellipse at 100% 0%,#f9e8d78c,transparent 35%),#fffcf9; }
-.auth-composition { width:100%; max-width:1400px; margin:auto; flex:1; padding:36px 48px 18px; display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); align-items:center; gap:72px; }
-.auth-story { min-width:0; }
-.auth-wordmark { display:block; width:220px; margin-bottom:42px; mix-blend-mode:multiply; }
-.auth-wordmark img { display:block; width:100%; height:auto; }
-.auth-headline h2 { color:#3c231b; font-size:clamp(36px,3.65vw,54px); line-height:1.12; font-weight:650; letter-spacing:-1.7px; margin:0; }
-.auth-headline h2>span { position:relative; }
-.auth-headline h2 svg { position:absolute; bottom:-11px; left:0; width:100%; height:15px; overflow:visible; fill:none; stroke:#c73941; stroke-width:4; stroke-linecap:round; }
-.auth-headline>p { font-size:18px; line-height:1.55; color:#65626a; margin:24px 0 0; }
-.auth-mascot { width:min(100%,470px); margin:8px 0 0 10px; mix-blend-mode:multiply; }
-.auth-mascot img { width:100%; height:auto; display:block; }
-.auth-composition .login-card { padding:42px; border-radius:28px; border:1px solid #f3eeeb; box-shadow:0 18px 60px #5535280d; }
-.auth-composition .login-shield { width:54px; height:54px; margin-bottom:26px; border-radius:17px; }
-.auth-composition .login-card h1 { font-size:30px; font-weight:650; letter-spacing:-.9px; line-height:1.25; margin:0 0 16px; }
-.auth-composition .login-description { font-size:1rem; line-height:1.65; margin-bottom:28px; }
-.auth-composition .field label { font-size:1rem; margin-bottom:9px; }
-.auth-composition .field { margin-bottom:20px; }
-.auth-composition .login-card .field input { height:52px; background:#fbfbfc; border-radius:12px; font-size:1rem; }
-.auth-composition .login-submit { min-height:52px; border-radius:12px; margin-top:24px; font-size:1rem; }
-.auth-composition .login-security { font-size:.875rem; margin-top:24px; }
-.login-footer { font-size:.875rem; color:#7b7470; padding:20px 24px; }
 .auth-composition .login-input>svg { top:17px; }
 .password-input>input { padding-right:48px; }
 .password-visibility { position:absolute; right:7px; top:6px; height:40px; width:40px; display:grid; place-items:center; color:#7c808a; border:0; border-radius:8px; background:transparent; }
@@ -354,37 +399,18 @@ button svg { flex:none; }
 .admin-table td:first-child>span,.access-badge { font-size:.875rem; }
 .admin-table th,.admin-table td { padding:18px 20px; }
 @media(min-width:901px) and (max-width:1200px) { .studio-grid { grid-template-columns:minmax(360px,.95fr) minmax(0,1.35fr); gap:26px; }.primary-export-row { grid-template-columns:1fr; }.primary-export-row .print-button { min-height:48px; } }
-@media(max-width:1200px) {
-  .app-header .header-inner { grid-template-columns:minmax(280px,360px) minmax(0,1fr); grid-template-areas:'brand ownership' 'appreciation appreciation'; gap:8px 30px; padding:14px 28px 18px; }
-  .app-header .mr-ghashi-brand { max-width:360px; }.app-header .ownership-logo { width:54px; }
-  .app-header .appreciation-banner { width:auto; }.app-header .appreciation-copy { flex:none; max-width:none; }.app-header .appreciation-inner { gap:30px; }
-  .auth-composition { gap:40px; padding:30px 36px 16px; }.auth-composition .login-card { padding:32px; }.auth-wordmark { width:200px; margin-bottom:30px; }.auth-headline h2 { font-size:42px; }.auth-mascot { max-width:420px; }
-}
-@media(max-width:900px) {
-  .app-header .header-inner { grid-template-columns:minmax(240px,300px) minmax(0,1fr); padding-left:24px; padding-right:24px; }.app-header .mr-ghashi-brand { max-width:300px; }.app-header .ownership-group { gap:12px; }.app-header .department-credit { font-size:.9375rem; }.app-header .ownership-logo { width:46px; }
-  .app-header .appreciation-inner { gap:22px; }.app-header .reaction-grid { width:348px; }.app-header .appreciation-copy h2 { font-size:1.1875rem; }
-  .auth-composition { gap:28px; padding:28px 24px 12px; }.auth-composition .login-card { padding:28px; }.auth-headline h2 { font-size:36px; letter-spacing:-1.1px; }.auth-headline>p { font-size:16px; }.auth-wordmark { width:180px; }.auth-mascot { width:100%; margin-left:0; }.auth-composition .login-card h1 { font-size:27px; }
-}
 @media(max-width:680px) {
   .app-header .header-inner { grid-template-columns:minmax(0,1fr); grid-template-areas:'brand' 'ownership' 'appreciation'; padding:12px 20px 16px; gap:10px; }
   .app-header .app-brand { width:230px; justify-self:center; }.app-header .mr-ghashi-brand { max-width:none; }
   .app-header .ownership-group { justify-self:center; gap:11px; }.app-header .ownership-logo { width:34px; }.app-header .department-credit { font-size:.8125rem; line-height:1.45; }
-  .app-header .appreciation-banner { width:100%; }.app-header .appreciation-inner { flex-direction:column; align-items:stretch; gap:6px; }.app-header .appreciation-copy { text-align:center; }.app-header .appreciation-copy h2 { font-size:1.125rem; margin-bottom:3px; }.app-header .appreciation-copy p { font-size:.875rem; }.app-header .reaction-grid { width:100%; gap:4px; }.app-header .reaction-art { width:50px; }.app-header .reaction-button { font-size:.8125rem; padding:4px 2px; }
+  .app-header .appreciation-banner { width:100%; }.app-header .appreciation-inner { flex-direction:column; align-items:stretch; gap:6px; }.app-header .appreciation-copy { text-align:center; }.app-header .appreciation-copy h2 { font-size:1.125rem; margin-bottom:3px; }.app-header .appreciation-copy p { font-size:.875rem; }.app-header .reaction-grid { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }.app-header .reaction-art { width:50px; }.app-header .reaction-button { font-size:.8125rem; padding:4px 2px; }
   .main-shell { padding-top:20px; }.session-bar { align-items:flex-start; font-size:.875rem; }.session-actions a,.session-actions button { font-size:.875rem; }.session-actions { gap:12px; }.company-control { gap:7px; }.company-control>span,.workspace-actions .company-control>span { font-size:.875rem; }.company-segments button { min-height:44px; padding:9px 17px; font-size:.9375rem; }.workspace-actions .export-shortcut { padding:10px 12px; min-height:44px; font-size:.875rem; }
   .field input,.field select { height:48px; }.editor-heading h2 { font-size:1.25rem; }.editor-heading p { font-size:.875rem; max-width:none; }.preview-status,.preview-status .text-button { font-size:.875rem; }.primary-export-row .print-button,.digital-button,.png-button { font-size:.9375rem; }.side-option strong { font-size:.9375rem; }.side-option small { font-size:.8125rem; }.advanced-details summary { font-size:1rem; }.qr-info strong { font-size:.875rem; }
-  .auth-composition { display:block; max-width:500px; padding:22px 20px 12px; }.auth-wordmark { width:185px; margin-bottom:0; }.auth-story { position:relative; padding:0 0 24px; }.auth-headline { margin-top:26px; padding-right:100px; min-height:82px; }.auth-headline h2 { font-size:27px; letter-spacing:-.9px; line-height:1.14; }.auth-headline h2 svg { bottom:-8px; height:11px; }.auth-headline>p { display:none; }.auth-mascot { position:absolute; right:-4px; bottom:14px; width:125px; margin:0; }.auth-composition .login-card { padding:28px 24px; border-radius:22px; }.auth-composition .login-card h1 { font-size:27px; }.auth-composition .login-description { font-size:.9375rem; }.auth-composition .login-shield { width:46px; height:46px; margin-bottom:22px; }.auth-composition .field label { font-size:.9375rem; }.auth-composition .login-submit { font-size:.9375rem; }.auth-composition .login-security { font-size:.875rem; }.login-footer { padding:20px; font-size:.8125rem; }
   .admin-header .mr-ghashi-brand { width:190px; }.admin-header .export-shortcut { max-width:120px; }.admin-directory .print-button { font-size:.875rem; }.admin-title h1 { font-size:30px; }
 }
 @media(max-width:380px) {
-  .workspace-actions { gap:10px; }.company-segments button { padding:9px 12px; }.workspace-actions .export-shortcut { padding:10px 9px; font-size:.8125rem; }.studio-grid { gap:22px; }.auth-composition { padding-left:16px; padding-right:16px; }.auth-composition .login-card { padding:26px 20px; }.auth-mascot { width:100px; right:-2px; bottom:18px; }.auth-headline { padding-right:76px; }.auth-headline h2 { font-size:25px; }.admin-header .mr-ghashi-brand { width:160px; }
+  .workspace-actions { gap:10px; }.company-segments button { padding:9px 12px; }.workspace-actions .export-shortcut { padding:10px 9px; font-size:.8125rem; }.studio-grid { gap:22px; }.admin-header .mr-ghashi-brand { width:160px; }
 }
-@media(max-width:680px) {
-  .auth-story { display:grid; grid-template-columns:minmax(0,1fr) 120px; column-gap:8px; }
-  .auth-wordmark { grid-column:1/-1; }
-  .auth-headline { grid-column:1; grid-row:2; padding-right:0; min-height:0; }
-  .auth-mascot { grid-column:2; grid-row:2; position:static; width:120px; align-self:end; margin:14px 0 0; }
-}
-@media(max-width:380px) { .auth-story { grid-template-columns:minmax(0,1fr) 100px; }.auth-mascot { width:100px; }.auth-headline { padding-right:0; } }
 @media(max-width:480px) { .admin-user-dialog .field-grid { grid-template-columns:1fr; gap:0; }.admin-user-dialog .field-grid .field { margin-bottom:18px; } }
 .compact-nav-label { display:none; }
 @media(max-width:680px) { .full-nav-label { display:none; }.compact-nav-label { display:inline; }.admin-header .export-shortcut { white-space:nowrap; } }

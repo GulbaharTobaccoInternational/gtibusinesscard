@@ -22,7 +22,35 @@ export function PasswordEmailForm({intent}:{intent:'setup'|'reset'}){
     try{const response=await fetch('/api/auth/password-email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,intent}),cache:'no-store'});const result=await response.json();if(!response.ok){if(response.status===429)setCooldown(Number(response.headers.get('Retry-After'))||60);throw new Error(result.error||'Please try again shortly.');}setMessage(result.message);setCooldown(result.resendAfter??60);}
     catch(error){setError(error instanceof Error?error.message:'Please try again.');}finally{setBusy(false);}
   }
-  return <><h1>{intent==='setup'?'Create your password':'Reset your password'}</h1><p className="login-description">{intent==='setup'?'Enter your approved work email. We’ll send a secure link to choose your password.':"Enter your registered work email and we'll send you a secure password reset link."}</p><form onSubmit={event=>void submit(event)} aria-busy={busy}><div className="field"><label htmlFor="recovery-email">Work email address</label><div className="login-input"><Mail size={18}/><input id="recovery-email" type="email" autoComplete="email" required maxLength={254} placeholder="you@yourcompany.com" value={email} onChange={event=>{setEmail(event.target.value);setError('');}} disabled={busy}/></div></div><FormError message={error}/>{message&&<p className="auth-success" role="status">{message}</p>}{cooldown>0?<button className="button print-button login-submit" disabled type="submit">Request again in {cooldown}s</button>:<SubmitButton busy={busy} label={intent==='setup'?'Send setup link':'Send reset link'} busyLabel="Requesting your link…"/>}</form><Link className="auth-back" href="/login"><ArrowLeft size={16}/>Back to sign in</Link></>;
+  const setup = intent === 'setup';
+  return (
+    <>
+      <h1>{setup ? 'Create your password' : 'Reset your password'}</h1>
+      <p className="login-description">{setup
+        ? 'Enter your approved work email. We’ll send you a secure link to set your password and start creating business cards.'
+        : "Enter your registered work email and we'll send you a secure password reset link."}</p>
+      <form onSubmit={event => void submit(event)} aria-busy={busy}>
+        <div className="field">
+          <label htmlFor="recovery-email">Work email address</label>
+          <div className="login-input">
+            <Mail size={18} />
+            <input id="recovery-email" type="email" autoComplete="email" required maxLength={254}
+              placeholder={setup ? 'name@gulbahartobacco.com' : 'you@yourcompany.com'} value={email}
+              onChange={event => { setEmail(event.target.value); setError(''); }} disabled={busy} />
+          </div>
+        </div>
+        <FormError message={error} />
+        {message ? <p className="auth-success" role="status">{message}</p> : setup && (
+          <p className="auth-success">If your email is approved, you’ll receive secure password setup instructions.</p>
+        )}
+        {cooldown > 0
+          ? <button className="button print-button login-submit" disabled type="submit">Request again in {cooldown}s</button>
+          : <SubmitButton busy={busy} label={setup ? 'Send setup link' : 'Send reset link'} busyLabel="Requesting your link…" />}
+      </form>
+      {setup && <p className="auth-access-note">Access is limited to approved users. Need access? Contact the Marketing Department.</p>}
+      <Link className="auth-back" href="/login"><ArrowLeft size={16} />Back to sign in</Link>
+    </>
+  );
 }
 export function NewPasswordForm({intent}:{intent:'setup'|'reset'}){
   const [password,setPassword]=useState(''),[confirmPassword,setConfirmPassword]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');

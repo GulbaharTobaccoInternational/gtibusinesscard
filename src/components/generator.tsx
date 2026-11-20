@@ -9,16 +9,16 @@ import type { SessionUser } from '@/lib/access';
 import { DEMO_EMPLOYEES, isDemoEmployee } from '@/lib/demo';
 import type { PreviewResult } from '@/lib/renderer';
 import type { ExportSettings } from '@/lib/export';
-import { MrGhashiBrand } from './brand-art';
+import { GtiLogo, MrGhashiBrand } from './brand-art';
 import { CompanySwitcher } from './company-switcher';
 import { Appreciation } from './appreciation';
 import { AppDialog } from './dialog';
 import { ExportPanel } from './export-panel';
 import { SessionBar } from './session-bar';
 
-type Props={ initials:Partial<Record<CompanyId,PreviewResult>>; brandSvgs:Record<CompanyId,string>;user:SessionUser };
+type Props={ initials:Partial<Record<CompanyId,PreviewResult>>;user:SessionUser };
 type CompanyProps={initial:PreviewResult;companyId:CompanyId;initialEmployee:Employee;saveEmployee:(employee:Employee)=>void;onExportBusyChange:(busy:boolean)=>void};
-export default function Generator({initials,brandSvgs,user}:Props){
+export default function Generator({initials,user}:Props){
   const [companyId,setCompanyId]=useState<CompanyId>(user.allowed_companies[0]);
   const [exportBusy,setExportBusy]=useState(false);
   const [showHelp,setShowHelp]=useState(false);
@@ -36,7 +36,7 @@ export default function Generator({initials,brandSvgs,user}:Props){
     <a className="skip-link" href="#employee-details">Skip to employee details</a>
     <header className="app-header"><div className="header-inner">
       <Link className="app-brand" href="/" aria-label="Mr Ghashi — Your Biz Card Genius"><MrGhashiBrand/></Link>
-      <div className="ownership-group"><span className="ownership-logo" role="img" aria-label="Gulbahar Tobacco International" dangerouslySetInnerHTML={{__html:brandSvgs.gti}}/><p className="department-credit"><span>An Internal Web Application by </span><span>GTI Marketing Department</span></p></div>
+      <div className="ownership-group"><GtiLogo className="ownership-logo"/><p className="department-credit"><span>An Internal Web Application </span><span>by GTI Marketing Department</span></p></div>
       <Appreciation companyId={companyId}/>
     </div></header>
     <main className="main-shell">
