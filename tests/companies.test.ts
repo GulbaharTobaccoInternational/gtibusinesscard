@@ -10,6 +10,7 @@ import { DEMO_EMPLOYEES, isDemoEmployee } from '../src/lib/demo';
 import { buildCard, sceneToSvg, previewCard } from '../src/lib/renderer';
 import { exportCard, exportRequestSchema } from '../src/lib/export';
 import { serializeVCard } from '../src/lib/vcard';
+import { getAssets } from '../src/lib/assets';
 import { DOUBLE_LEAF_DESIGN, getTemplate } from '../src/lib/templates';
 import baseline from './fixtures/gti-approved-digests.json';
 const hash=(data:unknown)=>crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
@@ -59,6 +60,23 @@ test('GTI retains its approved work-phone-only validation behavior',()=>{
   assert.ok(!buildCard(employee,'gti').issues.some(i=>i.code==='invalid-primaryMobile'));
   assert.ok(buildCard(employee,'doubleLeaf').issues.some(i=>i.code==='invalid-primaryMobile'));
 });
+for (const mobile of ['', DEMO_EMPLOYEES.doubleLeaf.mobile]) {
+  test(`Double Leaf keeps the approved phone icon with ${mobile ? 'a populated' : 'an empty'} mobile field`, async () => {
+    const employee = { ...DEMO_EMPLOYEES.doubleLeaf, mobile };
+    const { artwork } = getAssets('doubleLeaf');
+    const approved = sceneToSvg({ ...DOUBLE_LEAF_DESIGN, paths: artwork.front });
+    const preview = previewCard(employee, 'doubleLeaf').front;
+    // Rasterize at 10 pixels per mm. Isolate the handset and its adjacent number.
+    const crop = (svg: string, left: number, width: number) =>
+      sharp(Buffer.from(svg.replace('width="92mm" height="57mm"', 'width="920" height="570"'))).flatten({ background: '#fff' })
+        .extract({ left, top: 315, width, height: 25 }).raw().toBuffer();
+    const icon = await crop(approved, 340, 30);
+    assert.ok(icon.some(channel => channel < 200), 'The reference crop must contain the approved handset');
+    assert.ok((await crop(preview, 340, 30)).equals(icon), 'Handset artwork and position must match');
+    const emptyLine = await crop(approved, 375, 470);
+    assert.equal((await crop(preview, 375, 470)).equals(emptyLine), !mobile, 'Print text only for a supplied number');
+  });
+}
 test('Double Leaf direct work phone can be printed without inventing a main company line',()=>{
   const e={...DEMO_EMPLOYEES.doubleLeaf,mobile:'',workPhone:'+971 4 000 0000',primaryMobile:'workPhone' as const};
   assert.equal(buildCard(e,'doubleLeaf').issues.filter(i=>i.severity==='error').length,0);
