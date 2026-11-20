@@ -4,9 +4,9 @@ import type { ReactNode } from 'react';
 import { GtiLogo } from './brand-art';
 
 const steps = [
-  { title: 'Enter details', detail: 'Name, job title, email, mobile' },
-  { title: 'Preview live', detail: 'See the front and back instantly' },
-  { title: 'Download', detail: 'Print-ready file, correct resolution' },
+  { title: 'Enter details', detail: 'Name, job title,\nemail, mobile' },
+  { title: 'Preview live', detail: 'See the front and\nback instantly' },
+  { title: 'Download', detail: 'Print-ready file,\ncorrect resolution' },
 ];
 
 export function AuthFrame({ children }: { children: ReactNode }) {
@@ -24,9 +24,11 @@ export function AuthFrame({ children }: { children: ReactNode }) {
           <ol className="auth-steps" aria-label="How to create your card">
             {steps.map(({ title, detail }, index) => (
               <li key={title}>
-                <span className="step-number" aria-hidden="true">{index + 1}</span>
-                <strong>{title}</strong>
-                <p>{detail}</p>
+                <div className="auth-step-content">
+                  <span className="step-number" aria-hidden="true">{index + 1}</span>
+                  <strong>{title}</strong>
+                  <p>{detail}</p>
+                </div>
               </li>
             ))}
           </ol>
