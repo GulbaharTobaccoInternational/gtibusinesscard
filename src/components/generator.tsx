@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useReducer, useRef, useState, type CSSProperties } from 'react';
-import { Check, ChevronDown, Copy, Download, LoaderCircle, QrCode, RotateCcw, Sparkles, X } from 'lucide-react';
+import { Check, ChevronDown, Download, LoaderCircle, QrCode, RotateCcw, Sparkles, X } from 'lucide-react';
 import { EMPTY_EMPLOYEE, type Employee, type Issue } from '@/lib/employee';
 import { currentPreview, editorIssues, editorPreviewReducer, initialEditorPreview } from '@/lib/editor-preview';
 import { getCompany, type CompanyId } from '@/lib/company';
@@ -76,7 +76,6 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
   const [touched,setTouched]=useState<Set<string>>(new Set());
   const [submitted,setSubmitted]=useState(false);
   const [acknowledge,setAcknowledge]=useState(false);
-  const [showPayload,setShowPayload]=useState(false);
   const [showMobile,setShowMobile]=useState(false);
   const currentEmployee = useRef(employee);
   useEffect(()=>{
@@ -176,11 +175,6 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
           {field('companyMobile','Company-provided mobile','+971 50 000 0000',false,'tel')}{field('privatePhone','Private phone','+971 50 000 0000',false,'tel')}{field('additionalPhone','Additional phone','+971 50 000 0000',false,'tel')}{field('workFax','Work fax (QR only)','+971 4 000 0000',false,'tel')}{field('privateFax','Private fax (QR only)','+971 4 000 0000',false,'tel')}
           <p className="field-hint">These additional numbers are saved in the digital contact.</p>
         </div></details>
-        <section className="qr-settings" aria-label="QR Code"><div className="qr-settings-heading"><h3>Digital contact</h3></div>
-          <div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={qrMarkup}/><div><strong>One scan. All your details.</strong><p>A contact that is ready to save.</p><span className="vcard-label">vCard 3.0</span></div></div>
-            <button className="text-button inspect-button" type="button" onClick={()=>setShowPayload(!showPayload)}><QrCode size={15}/>{showPayload?'Hide':'View'} QR / vCard details<ChevronDown size={14} className={showPayload?'rotate-icon':''}/></button>
-            {showPayload&&<div className="payload-panel"><pre>{confirmed?.qr?.payload}</pre><button disabled={!confirmed?.qr} type="button" className="text-button" onClick={async()=>{try{await navigator.clipboard.writeText(confirmed?.qr?.payload??'');setNotice('vCard details copied.');}catch{setNotice('Select and copy the contact details above.');}}}><Copy size={13}/> Copy vCard</button></div>}
-        </section>
       </form>
     </aside>
     <div className="preview-column">

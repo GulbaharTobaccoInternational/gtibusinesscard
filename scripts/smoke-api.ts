@@ -16,9 +16,11 @@ await fs.mkdir('output/verification/companies',{recursive:true});
 assert.equal((await fetch(base,{redirect:'manual'})).status,307);
 assert.equal((await fetch(base+'/api/render',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).status,401);
 const page=await fetch(base,{headers:{Cookie:cookie}});assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.replace(/<[^>]*>/g,'').includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
+assert.ok(html.includes('Test your QR'));
+assert.ok(!html.includes('class="qr-settings"'));
 assert.ok(html.includes('Love our digital upgrade?'));assert.ok(html.includes('Give GTI Marketing Team some credit!'));assert.ok(html.includes('Gulbahar Tobacco International'));
 for(const label of ['Applause','Great Job','Coffee Treat','Hats Off'])assert.ok(html.includes(`aria-label="${label}"`));
-for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit','Include company telephone in QR','Made for good introductions.','Help &amp; print guide'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
+for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit','Include company telephone in QR','Digital contact','One scan. All your details.','View QR / vCard details','Copy vCard','Made for good introductions.','Help &amp; print guide'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
 assert.match(html,/<link[^>]+href="\/favicon\.ico\?[^" ]+"/);
 for(const [path,size] of [['/brand/favicon-16x16.png',16],['/brand/favicon-32x32.png',32],['/brand/apple-touch-icon.png',180]] as const){const icon=await fetch(base+path);assert.equal(icon.status,200);const metadata=await sharp(await icon.arrayBuffer()).metadata();assert.equal(metadata.width,size);assert.equal(metadata.height,size);assert.equal(metadata.hasAlpha,true);}
 assert.equal((await fetch(base+'/favicon.ico')).status,200);
