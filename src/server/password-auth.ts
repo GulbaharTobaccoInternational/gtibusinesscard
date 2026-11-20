@@ -5,6 +5,7 @@ import { emailLinkSchema } from '@/lib/password-auth';
 import { serviceClient, sessionClient } from './supabase';
 import { takeQuota } from './limits';
 
+export const PASSWORD_FORM_COOKIE = 'mr-ghashi-password-form';
 export const EMAIL_LINK_COOKIE='mr-ghashi-email-link';
 export const emailLinkCookieOptions={httpOnly:true,secure:process.env.NODE_ENV==='production',sameSite:'lax' as const,path:'/',maxAge:600};
 export function appUrl(){const url=new URL(process.env.NEXT_PUBLIC_APP_URL??'https://www.mrghashi.com');if(url.protocol!=='https:'&&url.hostname!=='127.0.0.1')throw new Error('Invalid application URL');return url.origin;}
@@ -14,7 +15,7 @@ export async function pendingEmailLink(){
 }
 export async function clearAuthCookies(){
   const jar=await cookies(),ref=new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname.split('.')[0];
-  for(const {name} of jar.getAll())if(name.startsWith(`sb-${ref}-auth-token`)||name===EMAIL_LINK_COOKIE)jar.set(name,'',{...emailLinkCookieOptions,maxAge:0});
+  for(const {name} of jar.getAll())if(name.startsWith(`sb-${ref}-auth-token`)||name===EMAIL_LINK_COOKIE||name===PASSWORD_FORM_COOKIE)jar.set(name,'',{...emailLinkCookieOptions,maxAge:0});
 }
 export async function markPasswordReady(id:string){
   const {error}=await serviceClient().from('authorized_users').update({password_set_at:new Date().toISOString()}).eq('id',id);
@@ -45,3 +46,9 @@ export async function sendPasswordEmail(user:AuthorizedUser,intent:'setup'|'rese
   if(error)console.error('Setup email status update failed.');
 }
 export async function takePasswordEmailQuota(email:string){await takeQuota('password-email-cooldown',email,1,60);await takeQuota('password-email-hour',email,6,3600);}
+
+export function passwordUpdateError(code: string | undefined, fallback: string) {
+  if (code === 'same_password') return new RequestError(400, 'Choose a password different from your current password.');
+  if (code === 'weak_password') return new RequestError(400, 'Use a longer, stronger password that meets the account requirements.');
+  return new RequestError(400, fallback);
+}

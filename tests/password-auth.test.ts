@@ -1,3 +1,5 @@
+import { changePasswordSchema } from '../src/lib/password-auth';
+import { issuePasswordLinkGrant, validPasswordLinkGrant } from '../src/server/password-link-grant';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {passwordDestination,passwordLoginSchema,passwordUpdateSchema,emailLinkSchema,passwordEmailSchema} from '../src/lib/password-auth';
@@ -27,4 +29,22 @@ test('only invitation and recovery proofs are accepted; no custom login or arbit
 test('retired OTP endpoints cannot create sessions and guide stale tabs to password login',async()=>{
  const endpoints=[await import('../src/app/api/auth/request/route'),await import('../src/app/api/auth/verify/route')];
  for(const endpoint of endpoints){const response=endpoint.POST();assert.equal(response.status,410);assert.equal(response.headers.get('set-cookie'),null);assert.match(response.headers.get('cache-control')??'',/no-store/);assert.match((await response.json()).error,/password/);}
+});
+
+test('in-app password changes require the current password, a distinct new password and matching confirmation', () => {
+  const valid = { currentPassword: ' previous password ', password: ' new password ', confirmPassword: ' new password ' };
+  assert.deepEqual(changePasswordSchema.parse(valid), valid);
+  for (const patch of [{ currentPassword: '' }, { currentPassword: valid.password }, { password: 'short', confirmPassword: 'short' }, { confirmPassword: 'different' }, { userId: 'other' }]) {
+    assert.equal(changePasswordSchema.safeParse({ ...valid, ...patch }).success, false);
+  }
+  assert.equal(changePasswordSchema.safeParse({ password: valid.password, confirmPassword: valid.password }).success, false);
+});
+
+test('email setup and recovery grants expire and belong to the verified session', () => {
+  const now = Date.now(), grant = issuePasswordLinkGrant('session-a', 'test-key', now);
+  assert.ok(validPasswordLinkGrant(grant, 'session-a', 'test-key', now));
+  assert.equal(validPasswordLinkGrant(grant, 'session-b', 'test-key', now), false);
+  assert.equal(validPasswordLinkGrant(grant, 'session-a', 'test-key', now + 600_000), false);
+  assert.equal(validPasswordLinkGrant(grant, 'session-a', 'other-key', now), false);
+  assert.equal(validPasswordLinkGrant('invalid', 'session-a', 'test-key', now), false);
 });

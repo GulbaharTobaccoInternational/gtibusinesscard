@@ -49,7 +49,7 @@ test('only an accepted exact sample is reused, within its own editor and company
   assert.equal(currentPreview(state), valid);
   state = reduce(state, { type: 'change', employee: EMPTY_EMPLOYEE });
   assert.equal(currentPreview(state), blank);
-  state = reduce(state, { type: 'change', employee: { ...sample, includeQr: false } });
+  state = reduce(state, { type: 'change', employee: { ...sample, includeCompanyPhone: false } });
   assert.equal(currentPreview(state), undefined);
   state = reduce(state, { type: 'change', employee: sample });
   assert.equal(currentPreview(state), valid);

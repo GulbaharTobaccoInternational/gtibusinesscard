@@ -17,10 +17,8 @@ export function buildCard(employee: Employee, companyId: CompanyId = 'gti') {
   const text = createTextWriter(front, issues, assets, companyId);
   const nameScale = FRONT_RENDERERS[companyId]({ employee, assets, front, issues, text });
   let qr: ReturnType<typeof createQr> | undefined;
-  if (employee.includeQr) {
-    try { qr = createQr(employee, companyId); front.paths.push(...qr.paths); issues.push(...qr.issues); }
-    catch { issues.push({field:'qr',severity:'error',code:'qr-encoding',message:'Could not encode these QR details. Remove optional fields and try again.'}); }
-  }
+  try { qr = createQr(employee, companyId); front.paths.push(...qr.paths); issues.push(...qr.issues); }
+  catch { issues.push({field:'qr',severity:'error',code:'qr-encoding',message:'Could not encode these QR details. Remove optional fields and try again.'}); }
   return { companyId, front, back, issues, qr, nameScale };
 }
 export function sceneToSvg(scene: Scene, pixels?: { width:number; height:number }): string {

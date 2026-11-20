@@ -5,7 +5,6 @@ import { companyIdSchema, getCompany } from '../lib/company';
 import { serviceClient } from './supabase';
 import type { AuthorizedUser } from '../lib/access';
 import { RequestError } from '../lib/http';
-import { takeQuota } from './limits';
 
 export const feedbackSchema=z.object({reactionId:z.enum(REACTIONS.map(reaction=>reaction.id)),companyId:companyIdSchema,submissionId:z.uuid()}).strict();
 export type FeedbackSubmission=z.infer<typeof feedbackSchema>;
@@ -28,19 +27,14 @@ export async function sendNotification(delivery:Delivery,send:typeof fetch=fetch
   return result.id; // Provider acceptance is not proof of inbox delivery.
 }
 export async function queueFeedback(submission:FeedbackSubmission,user:AuthorizedUser){
-  const client=serviceClient();
-  const {data:existing,error:lookupError}=await client.from('feedback_deliveries').select('id').eq('id',submission.submissionId).eq('auth_user_id',user.auth_user_id).maybeSingle();
-  if(lookupError)throw lookupError;if(existing)return;
-  await takeQuota('reaction-user',user.auth_user_id,10,60);
-  const {error}=await client.from('feedback_deliveries').insert({id:submission.submissionId,auth_user_id:user.auth_user_id,actor_name:user.full_name,actor_email:user.email,reaction_id:submission.reactionId,company_id:submission.companyId});
-  if(error){
-    if(error.code==='23505'){
-      const {data:owned}=await client.from('feedback_deliveries').select('id').eq('id',submission.submissionId).eq('auth_user_id',user.auth_user_id).maybeSingle();
-      if(owned)return;
-      throw new RequestError(409,'This reaction identifier is already in use.');
-    }
-    throw new RequestError(503,'The reaction could not be recorded.');
-  }
+  const { data, error } = await serviceClient().rpc('queue_appreciation', {
+    p_user_id: user.auth_user_id, p_id: submission.submissionId,
+    p_reaction: submission.reactionId, p_company: submission.companyId,
+  });
+  if (error?.code === '42501') throw new RequestError(403, 'Company access is required.');
+  if (error?.code === '23505') throw new RequestError(409, 'This reaction identifier is already in use.');
+  if (error) throw new RequestError(503, 'The reaction could not be recorded.');
+  return data as string | null;
 }
 export async function deliverQueuedFeedback(id:string){
   const client=serviceClient();

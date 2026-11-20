@@ -12,6 +12,8 @@ Source email templates are under `supabase/templates/`. The existing SMTP sender
 
 The callback accepts only fixed local password-setup/reset destinations and rejects external redirects. Auth link routes use no-referrer/no-store headers. Invalid, expired and reused proofs cannot establish a new session. Password changes require a verified active user and matching confirmation, use `updateUser`, and are followed by supported session revocation and browser cookie clearing. The employee then signs in with the new password. Supabase remains responsible for hashing and password policy enforcement (the existing minimum is six characters).
 
+The signed-in **Change password** action is available to employees and administrators. The same-origin endpoint limits attempts by verified user ID, verifies the current password with a separate Supabase Auth client, updates that same account and requests global sign-out. Password setup and recovery use a ten-minute, HttpOnly grant issued after Supabase verifies the invitation or recovery link. The grant is bound to that specific Auth session.
+
 Public setup/recovery requests have the same confirmation and shared quotas for unknown and disabled addresses, and send no email to those accounts. Administrators can resend invitation/setup/reset instructions, with a shared recipient cooldown and hourly quota. Provider acceptance is not a claim of inbox receipt. Existing reaction email processing and its recipients are unchanged.
 
 ## Safe rollout

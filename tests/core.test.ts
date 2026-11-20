@@ -56,7 +56,7 @@ test('supported accents render; unsupported characters are reported without font
  assert.ok(buildCard({...sample,firstName:'محمد'}).issues.some(i=>i.code==='glyph-firstName'));
 });
 test('missing optional mobile omits its label and separator',()=>{
- const none={...sample,mobile:'',includeQr:false};assert.equal(validateEmployee(none).length,0);
+ const none={...sample,mobile:''};assert.equal(validateEmployee(none).length,0);
  assert.equal(buildCard(none).issues.filter(i=>i.severity==='error').length,0);
  assert.ok(serializeVCard(none).includes(`TEL;TYPE=WORK,VOICE:${COMPANY.telephone}`));
 });
@@ -66,10 +66,14 @@ test('changing primary mobile changes printed artwork; all numbers stay in QR',(
  assert.ok(serializeVCard(employee).includes(employee.companyMobile));
  assert.ok(validateEmployee({...employee,primaryMobile:'privatePhone'}).some(i=>i.field==='primaryMobile'));
 });
-test('QR toggle changes only front QR paths; reverse stays fixed',()=>{
- const a=buildCard(sample),b=buildCard({...sample,includeQr:false});
- assert.ok(a.front.paths.length>b.front.paths.length);assert.deepEqual(a.back,b.back);
- assert.deepEqual(a.back,buildCard({...sample,firstName:'Jane',lastName:'Doe'}).back);
+test('legacy QR preferences cannot remove the front QR for either company', () => {
+  const legacy = { ...sample, includeQr: false };
+  for (const company of ['gti', 'doubleLeaf'] as const) {
+    const expected = buildCard(sample, company);
+    assert.ok(expected.qr);
+    assert.deepEqual(buildCard(legacy, company).front, expected.front);
+    assert.deepEqual(employeeSchema.parse(legacy), employeeSchema.parse(sample));
+  }
 });
 test('QR decodes from actual full-card PNG at 300 and 600 DPI',async()=>{
  for(const dpi of [300,600] as const){

@@ -73,9 +73,10 @@ for(const companyId of COMPANY_IDS){
       for(const page of pdf.getPages()){assert.ok(Math.abs(page.getWidth()*25.4/72-92)<1e-6);assert.ok(Math.abs(page.getHeight()*25.4/72-57)<1e-6);const fonts=page.node.Resources()?.get(PDFName.of('Font'));assert.ok(!fonts||(fonts instanceof PDFDict&&fonts.keys().length===0),'No live font resources');const images=page.node.Resources()?.get(PDFName.of('XObject'));assert.ok(!images||(images instanceof PDFDict&&images.keys().length===0),'No raster image resources');}
     }
   });
-  test(`${companyId}: actual full-card QR decodes at 300 and 600 DPI`,async()=>{
+  test(`${companyId}: mandatory QR decodes from legacy full-card PNG requests at 300 and 600 DPI`,async()=>{
     for(const dpi of [300,600] as const){
-      const file=await exportCard(DEMO_EMPLOYEES[companyId],{sides:'front',format:'png',dpi,acknowledgeQrWarning:true},companyId);
+      const legacy = { ...DEMO_EMPLOYEES[companyId], includeQr: false };
+      const file=await exportCard(legacy,{sides:'front',format:'png',dpi,acknowledgeQrWarning:true},companyId);
       const {data,info}=await sharp(file.bytes).ensureAlpha().raw().toBuffer({resolveWithObject:true});
       assert.equal(jsQR(new Uint8ClampedArray(data),info.width,info.height)?.data,serializeVCard(DEMO_EMPLOYEES[companyId],companyId));
     }

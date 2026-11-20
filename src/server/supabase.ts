@@ -21,3 +21,11 @@ export async function sessionClient(){
     global:{fetch:(input,init)=>fetch(input,{...init,cache:'no-store'})},
   });
 }
+
+// Keep password verification separate from the session cookies of the current browser.
+export function passwordVerificationClient() {
+  return createClient(required('NEXT_PUBLIC_SUPABASE_URL'), required('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'), {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
+  });
+}

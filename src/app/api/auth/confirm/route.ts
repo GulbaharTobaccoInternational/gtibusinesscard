@@ -1,7 +1,8 @@
+import { issuePasswordLinkGrant } from '@/server/password-link-grant';
 import { cookies } from 'next/headers';
 import { PRIVATE_HEADERS, RequestError } from '@/lib/http';
 import { findAuthorizedEmail, privateError, requireSameOrigin } from '@/server/access';
-import { EMAIL_LINK_COOKIE, emailLinkCookieOptions, pendingEmailLink, clearAuthCookies } from '@/server/password-auth';
+import { EMAIL_LINK_COOKIE, PASSWORD_FORM_COOKIE, emailLinkCookieOptions, pendingEmailLink, clearAuthCookies } from '@/server/password-auth';
 import { requestIp, takeQuota } from '@/server/limits';
 import { sessionClient } from '@/server/supabase';
 export async function POST(request:Request){
@@ -14,6 +15,10 @@ export async function POST(request:Request){
     if(error||!data.user)throw new RequestError(400,'This link is invalid or has expired. Please request a new one.');
     const user=await findAuthorizedEmail(data.user.email?.toLowerCase()??'');
     if(!user||user.status!=='active'||user.auth_user_id!==data.user.id){await client.auth.signOut({scope:'local'});await clearAuthCookies();return Response.json({redirect:'/access-not-authorized'},{status:403,headers:PRIVATE_HEADERS});}
+    const { data: verified } = await client.auth.getClaims(data.session?.access_token);
+    const sessionId = verified?.claims.session_id;
+    if (!sessionId) throw new RequestError(400, 'Please request a fresh password link.');
+    (await cookies()).set(PASSWORD_FORM_COOKIE, issuePasswordLinkGrant(sessionId, process.env.SUPABASE_SECRET_KEY!), emailLinkCookieOptions);
     return Response.json({ok:true,redirect:link.next},{headers:PRIVATE_HEADERS});
   }catch(error){return privateError(error);}
 }

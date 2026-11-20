@@ -180,12 +180,11 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
           {field('companyMobile','Company-provided mobile','+971 50 000 0000',false,'tel')}{field('privatePhone','Private phone','+971 50 000 0000',false,'tel')}{field('additionalPhone','Additional phone','+971 50 000 0000',false,'tel')}{field('workFax','Work fax (QR only)','+971 4 000 0000',false,'tel')}{field('privateFax','Private fax (QR only)','+971 4 000 0000',false,'tel')}
           <p className="field-hint">These additional numbers are saved in the digital contact.</p>
         </div></details>
-        <section className="qr-settings" aria-label="QR Code"><div className="qr-settings-heading"><h3>Digital contact</h3><label className="switch"><input type="checkbox" checked={employee.includeQr} onChange={event=>update('includeQr',event.target.checked)} aria-label="Include QR Code"/><span/></label></div>
-          {employee.includeQr?<><div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={qrMarkup}/><div><strong>One scan. All your details.</strong><p>A contact that is ready to save.</p><span className="vcard-label">vCard 3.0</span></div></div>
+        <section className="qr-settings" aria-label="QR Code"><div className="qr-settings-heading"><h3>Digital contact</h3></div>
+          <div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={qrMarkup}/><div><strong>One scan. All your details.</strong><p>A contact that is ready to save.</p><span className="vcard-label">vCard 3.0</span></div></div>
             {COMPANY.telephone&&<label className="check-label company-qr-check"><input type="checkbox" checked={employee.includeCompanyPhone} onChange={event=>update('includeCompanyPhone',event.target.checked)}/> Include company telephone in QR</label>}
             <button className="text-button inspect-button" type="button" onClick={()=>setShowPayload(!showPayload)}><QrCode size={15}/>{showPayload?'Hide':'View'} QR / vCard details<ChevronDown size={14} className={showPayload?'rotate-icon':''}/></button>
             {showPayload&&<div className="payload-panel"><pre>{confirmed?.qr?.payload}</pre><button disabled={!confirmed?.qr} type="button" className="text-button" onClick={async()=>{try{await navigator.clipboard.writeText(confirmed?.qr?.payload??'');setNotice('vCard details copied.');}catch{setNotice('Select and copy the contact details above.');}}}><Copy size={13}/> Copy vCard</button></div>}
-          </>:<div className="qr-disabled"><QrCode size={22}/><p>QR code is off. Your card keeps its approved layout.</p></div>}
         </section>
       </form>
     </aside>
@@ -197,7 +196,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
         </div>
         <div className="preview-status" aria-live="polite"><span className={ready?'status-ready':renderError?'status-error':'status-neutral'}>{updating?<LoaderCircle size={14} className="spinner"/>:ready?<Check size={14}/>:renderError?<X size={14}/>:null}{updating?'Updating your card…':renderError?'Preview unavailable':ready?'Your card is ready to export':`Add your details · ${complete} of 5 required fields`}</span><button type="button" className="text-button" onClick={()=>setShowMobile(!showMobile)}><QrCode size={14}/>{showMobile?'Close QR view':'Test your QR'}</button></div>
         {renderError&&<p role="alert" className="inline-error">{renderError}</p>}
-        {showMobile&&<div className="scan-panel">{employee.includeQr && !confirmed ? <p>{updating ? 'Updating your card…' : 'Preview unavailable'}</p> : employee.includeQr&&confirmed?.qr?<><div dangerouslySetInnerHTML={qrMarkup}/><p>Scan to check your contact.<span>This enlarged view checks the data. Scan a printed proof at final size before ordering.</span></p></>:<p>Enable “Include QR Code” to generate a contact QR.</p>}</div>}
+        {showMobile&&<div className="scan-panel">{!confirmed ? <p>{updating ? 'Updating your card…' : 'Preview unavailable'}</p> : confirmed.qr?<><div dangerouslySetInnerHTML={qrMarkup}/><p>Scan to check your contact.<span>This enlarged view checks the data. Scan a printed proof at final size before ordering.</span></p></>:<p>QR preview unavailable. Check your contact details.</p>}</div>}
       </section>
       <ExportPanel sides={sides} setSides={value=>{setSides(value);sessionStorage.setItem(storageKey,value);}} dpi={dpi} setDpi={setDpi} busy={busy} updating={updating} renderError={renderError} download={download} densityWarning={densityWarning} acknowledge={acknowledge} setAcknowledge={setAcknowledge} submitted={submitted} errors={errors} downloadError={downloadError}/>
     </div>
