@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, LoaderCircle, Mail, ShieldCheck } from 'lucide-react';
 import { PasswordInput } from './password-input';
@@ -8,9 +9,10 @@ import { PASSWORD_MIN_LENGTH } from '@/lib/password-policy';
 function FormError({message}:{message:string}){return message?<div className="login-error" role="alert"><p>{message}</p></div>:null;}
 function SubmitButton({busy,label,busyLabel}:{busy:boolean;label:string;busyLabel:string}){return <button className="button print-button login-submit" type="submit" disabled={busy}>{busy?<LoaderCircle className="spinner" size={18}/>:null}<span>{busy?busyLabel:label}</span>{!busy&&<ArrowRight size={19}/>}</button>;}
 export function PasswordSignIn({updated=false}:{updated?:boolean}){
+  const router = useRouter();
   const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
   async function submit(event:FormEvent){event.preventDefault();if(busy)return;setBusy(true);setError('');
-    try{const response=await fetch('/api/auth/sign-in',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password}),cache:'no-store'});const result=await response.json();if(!response.ok)throw new Error(result.error||'Sign in could not be completed.');window.location.replace('/');}
+    try{const response=await fetch('/api/auth/sign-in',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password}),cache:'no-store'});const result=await response.json();if(!response.ok)throw new Error(result.error||'Sign in could not be completed.');router.replace('/');}
     catch(error){setError(error instanceof Error?error.message:'Please try again.');setBusy(false);}
   }
   return <><h1>Welcome to Mr Ghashi.</h1><p className="login-description">Sign in with your registered work email and password.</p>{updated&&<p className="auth-success" role="status">Your password is saved. Sign in to continue.</p>}<form onSubmit={event=>void submit(event)} aria-busy={busy}><div className="field"><label htmlFor="login-email">Work email address</label><div className="login-input"><Mail size={18}/><input id="login-email" type="email" autoComplete="email" required maxLength={254} placeholder="you@yourcompany.com" value={email} onChange={event=>{setEmail(event.target.value);setError('');}} disabled={busy}/></div></div><PasswordInput id="login-password" label="Password" value={password} onChange={value=>{setPassword(value);setError('');}} disabled={busy}/><div className="auth-forgot"><Link href="/forgot-password">Forgot password?</Link></div><FormError message={error}/><SubmitButton busy={busy} label="Sign in" busyLabel="Signing in…"/></form><p className="login-security"><ShieldCheck size={16}/>Secure access for approved team members.</p><p className="auth-first-time">First time here? <Link href="/forgot-password?intent=setup">Create your password</Link></p></>;
@@ -40,7 +42,7 @@ export function PasswordEmailForm({intent}:{intent:'setup'|'reset'}){
           </div>
         </div>
         <FormError message={error} />
-        {message ? <p className="auth-success" role="status">{message}</p> : setup && (
+        {message ? <p className="auth-success password-request-confirmation" role="status">{message}</p> : setup && (
           <p className="auth-success">If your email is approved, you’ll receive secure password setup instructions.</p>
         )}
         {cooldown > 0

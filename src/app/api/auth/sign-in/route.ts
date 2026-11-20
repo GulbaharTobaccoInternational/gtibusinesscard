@@ -10,8 +10,12 @@ export async function POST(request:Request){
   try{
     requireSameOrigin(request);await takeQuota('password-login-ip',requestIp(request),30,600);
     const parsed=passwordLoginSchema.safeParse(await readPrivateJson(request));if(!parsed.success)throw new RequestError(400,'Enter your work email and password.');
-    const {email,password}=parsed.data;await takeQuota('password-login-email',email,12,600);
-    const user=await findAuthorizedEmail(email);if(!user||user.status!=='active')throw new RequestError(401,CREDENTIALS_ERROR);
+    const {email,password}=parsed.data;
+    const [, user] = await Promise.all([
+      takeQuota('password-login-email', email, 12, 600),
+      findAuthorizedEmail(email),
+    ]);
+    if(!user||user.status!=='active')throw new RequestError(401,CREDENTIALS_ERROR);
     const client=await sessionClient();const {data,error}=await client.auth.signInWithPassword({email,password});
     if(error||!data.user){if(error&&error.status&&error.status>=500)throw new RequestError(503,'Sign in is temporarily unavailable. Please try again.');throw new RequestError(401,CREDENTIALS_ERROR);}
     const fresh=await findAuthorizedEmail(email);

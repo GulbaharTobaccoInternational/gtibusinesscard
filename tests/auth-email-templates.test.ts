@@ -13,6 +13,8 @@ for (const type of ['invite', 'recovery']) {
     }
     assert.match(body, /@media \(prefers-color-scheme: dark\)/);
     assert.doesNotMatch(body, /An Internal Web Application|by GTI Marketing Department/i);
+    if (type === 'recovery') assert.doesNotMatch(body, /<h1\b|Need a new password\?|heading-rays\.png/i);
+    else assert.match(body, /<h1[^>]*>Welcome to Mr Ghashi!<\/h1>/);
     const logos = Array.from(body.matchAll(/<img class="(logo-(?:light|dark))[^"]*"[^>]+>/g));
     assert.deepEqual(logos.map(([, theme]) => theme), ['logo-light', 'logo-dark', 'logo-light', 'logo-dark']);
     const files = logos.map(([img, theme]) => {

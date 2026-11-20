@@ -8,9 +8,9 @@ import type { Issue } from '@/lib/employee';
 type Props = {
   sides:'front'|'both'; setSides:(sides:'front'|'both')=>void; dpi:300|600; setDpi:(dpi:300|600)=>void;
   busy:ExportSettings['format']|null; updating:boolean; renderError:string; download:(format:ExportSettings['format'])=>Promise<void>;
-  densityWarning:Issue|undefined; acknowledge:boolean; setAcknowledge:(value:boolean)=>void; submitted:boolean; errors:Issue[]; downloadError:string;
+  showQrReminder:boolean; densityWarning:Issue|undefined; acknowledge:boolean; setAcknowledge:(value:boolean)=>void; submitted:boolean; errors:Issue[]; downloadError:string;
 };
-export function ExportPanel({sides,setSides,dpi,setDpi,busy,updating,renderError,download,densityWarning,acknowledge,setAcknowledge,submitted,errors,downloadError}:Props) {
+export function ExportPanel({sides,setSides,dpi,setDpi,busy,updating,renderError,download,densityWarning,showQrReminder,acknowledge,setAcknowledge,submitted,errors,downloadError}:Props) {
   const resolutionRefs=useRef<Record<number,HTMLButtonElement|null>>({});
   const disabled=!!busy||updating||!!renderError;
   return <section className="export-panel" id="export-options" tabIndex={-1} aria-label="Export Options">
@@ -30,7 +30,17 @@ export function ExportPanel({sides,setSides,dpi,setDpi,busy,updating,renderError
       </div>
     </div>
     <div className="print-specs"><span><Layers2 size={13}/> Outlined vector artwork</span><span>92 × 57 mm</span><span>No extra bleed</span></div>
-    {densityWarning&&<div className="qr-warning"><strong>Scan a printed proof</strong><p>{densityWarning.message}</p><label className="check-label"><input type="checkbox" checked={acknowledge} onChange={event=>setAcknowledge(event.target.checked)}/> I’ll scan a printed proof at the final card size.</label></div>}
+    {densityWarning && <div className="qr-warning">
+      <strong>Scan a printed proof</strong>
+      <p>{densityWarning.message}</p>
+      <label className="check-label">
+        <input id="qr-print-acknowledgement" type="checkbox" checked={acknowledge}
+          aria-describedby={showQrReminder ? 'qr-print-reminder' : undefined}
+          onChange={event=>setAcknowledge(event.target.checked)}/>
+        I’ll scan a printed proof at the final card size.
+      </label>
+      {showQrReminder && <p id="qr-print-reminder" className="qr-reminder" role="alert">Please tick the checkbox above to acknowledge the QR print guidance before downloading.</p>}
+    </div>}
     {submitted&&errors.length>0&&<ul className="export-errors">{errors.map(issue=><li key={issue.code}>{issue.message}</li>)}</ul>}
     {downloadError&&<p className="inline-error" role="alert">{downloadError}</p>}
   </section>;

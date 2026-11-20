@@ -31,7 +31,6 @@ button svg { flex:none; }
 .ownership-group { display:flex; align-items:center; gap:16px; }
 .ownership-logo { display:block; width:66px; flex:none; line-height:0; }
 .ownership-logo svg { display:block; width:100%; height:auto; }
-.department-credit { margin:0; max-width:300px; color:#35383e; font-size:.875rem; line-height:1.5; text-align:left; }
 .icon-button { border:0; background:transparent; color:var(--muted); border-radius:9px; width:34px; height:34px; padding:7px; display:inline-grid; place-items:center; flex:none; }
 .icon-button:hover { color:var(--ink); background:#eceef2; }
 .main-shell { max-width:1376px; margin:auto; padding:24px 40px 0; }
@@ -148,6 +147,7 @@ button svg { flex:none; }
 .qr-warning { margin-top:18px; padding:15px; border-radius:11px; background:#fff8e9; color:#785c24; }
 .qr-warning strong { font-size:var(--text-label); font-weight:600; }
 .qr-warning p { font-size:var(--text-small); margin:6px 0 12px; line-height:1.6; }
+.qr-warning .qr-reminder { margin:8px 0 0; font-weight:600; }
 .qr-warning .check-label { color:#785c24; }
 .export-errors { padding:13px 13px 13px 28px; border-radius:10px; background:#fff1f4; color:var(--danger); margin:16px 0 0; font-size:var(--text-small); line-height:1.6; }
 .inline-error { margin:14px 0 0; padding:12px; border-radius:9px; background:#fff1f4; color:var(--danger); font-size:var(--text-small); line-height:1.55; }
@@ -202,10 +202,10 @@ button svg { flex:none; }
   .main-shell { padding-left:16px; padding-right:16px; }.company-control>span { font-size:.8125rem; }.company-segments button { padding-left:13px; padding-right:13px; }.editor-panel { padding:22px 20px; }.side-option { padding:12px 10px; }.side-option small { font-size:.8125rem; }.side-check { display:none; }.office-fields { grid-template-columns:1fr; gap:0; }.office-fields .field:last-child { margin-bottom:18px; }
 }
 @media(max-width:900px) {
-  .header-inner { padding-left:24px; padding-right:24px; }.mr-ghashi-brand { width:240px; }.ownership-logo { width:54px; }.department-credit { max-width:240px; font-size:.8125rem; }.ownership-group { gap:12px; }.appreciation-inner { padding-left:24px; padding-right:24px; gap:0 20px; }.reaction-grid { width:348px; gap:8px; }.reaction-art { width:56px; }
+  .header-inner { padding-left:24px; padding-right:24px; }.mr-ghashi-brand { width:240px; }.ownership-logo { width:54px; }.ownership-group { gap:12px; }.appreciation-inner { padding-left:24px; padding-right:24px; gap:0 20px; }.reaction-grid { width:348px; gap:8px; }.reaction-art { width:56px; }
 }
 @media(max-width:680px) {
-  .header-inner { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); min-height:0; padding:12px 16px; gap:14px; }.app-brand { min-width:0; }.mr-ghashi-brand { width:100%; max-width:160px; }.ownership-logo { width:30px; }.ownership-group { gap:8px; }.department-credit { max-width:none; font-size:.8125rem; line-height:1.4; }.appreciation-inner { flex-direction:column; align-items:stretch; padding:12px 16px 8px; gap:6px; }.appreciation-copy h2 { font-size:1.0625rem; margin-bottom:3px; }.appreciation-copy p { font-size:.8125rem; }.reaction-grid { width:100%; gap:6px; }.reaction-art { width:48px; }.reaction-button { font-size:.8125rem; padding:5px 3px; }.workspace-heading { margin-bottom:20px; }.workspace-actions .company-control>span { display:block; }.company-control { gap:5px; }.confetti-burst { height:210px; }
+  .header-inner { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); min-height:0; padding:12px 16px; gap:14px; }.app-brand { min-width:0; }.mr-ghashi-brand { width:100%; max-width:160px; }.ownership-logo { width:30px; }.ownership-group { gap:8px; }.appreciation-inner { flex-direction:column; align-items:stretch; padding:12px 16px 8px; gap:6px; }.appreciation-copy h2 { font-size:1.0625rem; margin-bottom:3px; }.appreciation-copy p { font-size:.8125rem; }.reaction-grid { width:100%; gap:6px; }.reaction-art { width:48px; }.reaction-button { font-size:.8125rem; padding:5px 3px; }.workspace-heading { margin-bottom:20px; }.workspace-actions .company-control>span { display:block; }.company-control { gap:5px; }.confetti-burst { height:210px; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .confetti-burst { display:none; } *,*:before,*:after { transition:none!important; animation:none!important; } }
 
@@ -251,7 +251,7 @@ button svg { flex:none; }
   gap:12px 32px;
   padding-block:16px;
 }
-.app-header .app-brand { grid-area:brand; width:100%; }
+.app-header .app-brand { grid-area:brand; width:100%; align-self:start; }
 .app-header .mr-ghashi-brand { width:100%; max-width:none; }
 .app-header .ownership-group {
   grid-area:ownership; place-self:start end; gap:14px;
@@ -260,13 +260,10 @@ button svg { flex:none; }
 }
 .app-header .ownership-logo { width:clamp(48px,4.1vw,64px); height:auto; }
 .app-header { --header-label-size:.85rem; overflow-x:clip; }
-.app-header .department-credit,.app-header .reaction-button { font-family:inherit; font-size:var(--header-label-size); font-weight:400; }
-/* Keep the original two-line row height above the reactions as the label gets smaller. */
-.app-header .department-credit { display:grid; align-content:center; min-block-size:2.52rem; max-width:none; line-height:1.26; white-space:nowrap; }
-.department-credit>span { display:block; }
+.app-header .reaction-button { font-family:inherit; font-size:var(--header-label-size); font-weight:400; }
 .app-header .appreciation-banner { grid-area:appreciation; justify-self:end; border:0; }
 .app-header .appreciation-inner { padding:0; gap:clamp(18px,2.2vw,34px); justify-content:flex-end; align-items:last baseline; }
-.app-header .appreciation-copy h2 { font-size:1.18rem; line-height:1.3; margin-bottom:6px; }
+.app-header .appreciation-copy h2 { font-size:1.18rem; line-height:1.3; margin-bottom:1px; }
 .app-header .appreciation-copy p { font-size:.9rem; color:#5a606a; }
 .app-header .reaction-grid { width:auto; grid-template-columns:repeat(4,minmax(68px,1fr)); gap:8px; }
 .app-header .reaction-art { width:52px; }
@@ -373,6 +370,10 @@ button svg { flex:none; }
 .side-option small { font-size:.8125rem; }
 .advanced-details summary { font-size:1rem; }
 .session-bar { font-size:.9375rem; margin-bottom:22px; }
+.workspace-account { display:flex; flex-wrap:wrap; align-items:center; gap:8px 24px; margin-bottom:22px; }
+.workspace-credit { margin:0; color:var(--muted); font-size:.875rem; font-weight:400; line-height:1.45; }
+.workspace-account .session-bar { margin:0 0 0 auto; justify-content:flex-end; }
+.workspace-account .session-actions { justify-content:flex-end; }
 .session-actions a,.session-actions button { font-size:.9375rem; min-height:32px; }
 .auth-composition .login-input>svg { top:17px; }
 .password-input>input { padding-right:48px; }
@@ -385,6 +386,7 @@ button svg { flex:none; }
 .auth-back { display:inline-flex; align-items:center; gap:8px; margin-top:24px; font-size:.9375rem; color:#62636d; border-radius:4px; }
 .auth-back:hover { color:var(--brand-dark); }
 .auth-success { font-size:.9375rem; line-height:1.65; border-radius:10px; padding:14px 16px; background:#f0f7f1; color:#31684a; margin:18px 0; }
+.password-request-confirmation { background:#242428; color:#fff; font-weight:550; padding:16px 18px; margin:20px 0; }
 .password-requirements { margin:-8px 0 22px; font-size:.875rem; }
 .onboarding-status { display:block; font-size:.875rem; color:var(--text); margin-bottom:5px; }
 .invitation-button { font-size:.875rem; }
@@ -395,10 +397,10 @@ button svg { flex:none; }
 .admin-table th,.admin-table td { padding:18px 20px; }
 @media(min-width:901px) and (max-width:1200px) { .studio-grid { grid-template-columns:minmax(360px,.95fr) minmax(0,1.35fr); gap:26px; }.primary-export-row { grid-template-columns:1fr; }.primary-export-row .print-button { min-height:48px; } }
 @media(max-width:680px) {
-  .app-header .header-inner { grid-template-columns:minmax(0,1fr); grid-template-areas:'brand' 'ownership' 'appreciation'; padding:12px 20px 16px; gap:10px; }
-  .app-header .app-brand { width:230px; justify-self:center; }.app-header .mr-ghashi-brand { max-width:none; }
-  .app-header { --header-label-size:.8125rem; }.app-header .ownership-group { justify-self:end; gap:11px; }.app-header .ownership-logo { width:34px; }.app-header .department-credit { min-block-size:0; line-height:1.45; }
-  .app-header .appreciation-banner { width:100%; }.app-header .appreciation-inner { flex-direction:column; align-items:stretch; gap:6px; }.app-header .appreciation-copy { text-align:center; }.app-header .appreciation-copy h2 { font-size:1.125rem; margin-bottom:3px; }.app-header .appreciation-copy p { font-size:.875rem; }.app-header .reaction-grid { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }.app-header .reaction-art { width:50px; }.app-header .reaction-button { padding:4px 2px; }
+  .app-header .header-inner { grid-template-columns:minmax(0,1fr) auto; grid-template-areas:'brand ownership' 'appreciation appreciation'; padding:12px 20px 16px; gap:10px; }
+  .app-header .app-brand { width:min(100%,230px); justify-self:start; }.app-header .mr-ghashi-brand { max-width:none; }
+  .app-header { --header-label-size:.8125rem; }.app-header .ownership-group { justify-self:end; gap:11px; }.app-header .ownership-logo { width:34px; }
+  .app-header .appreciation-banner { width:100%; }.app-header .appreciation-inner { flex-direction:column; align-items:stretch; gap:6px; }.app-header .appreciation-copy { text-align:center; }.app-header .appreciation-copy h2 { font-size:1.125rem; margin-bottom:1px; }.app-header .appreciation-copy p { font-size:.875rem; }.app-header .reaction-grid { width:100%; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; }.app-header .reaction-art { width:50px; }.app-header .reaction-button { padding:4px 2px; }
   .main-shell { padding-top:20px; }.session-bar { align-items:flex-start; font-size:.875rem; }.session-actions a,.session-actions button { font-size:.875rem; }.session-actions { gap:12px; }.company-control { gap:7px; }.company-control>span,.workspace-actions .company-control>span { font-size:.875rem; }.company-segments button { min-height:44px; padding:9px 17px; font-size:.9375rem; }.workspace-actions .export-shortcut { padding:10px 12px; min-height:44px; font-size:.875rem; }
   .field input,.field select { height:48px; }.editor-heading h2 { font-size:1.25rem; }.editor-heading p { font-size:.875rem; max-width:none; }.preview-status,.preview-status .text-button { font-size:.875rem; }.primary-export-row .print-button,.digital-button,.png-button { font-size:.9375rem; }.side-option strong { font-size:.9375rem; }.side-option small { font-size:.8125rem; }.advanced-details summary { font-size:1rem; }
   .admin-header .mr-ghashi-brand { width:190px; }.admin-header .export-shortcut { max-width:120px; }.admin-directory .print-button { font-size:.875rem; }.admin-title h1 { font-size:30px; }

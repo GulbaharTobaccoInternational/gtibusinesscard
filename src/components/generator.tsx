@@ -44,11 +44,14 @@ export default function Generator({initials,user}:Props){
     <a className="skip-link" href="#employee-details">Skip to employee details</a>
     <header className="app-header"><div className="header-inner">
       <Link className="app-brand" href="/" aria-label="Mr Ghashi — Your Biz Card Genius"><MrGhashiBrand/></Link>
-      <div className="ownership-group"><GtiLogo className="ownership-logo"/><p className="department-credit"><span>An Internal Web Application </span><span>by GTI Marketing Department</span></p></div>
+      <div className="ownership-group"><GtiLogo className="ownership-logo"/></div>
       <Appreciation companyId={companyId}/>
     </div></header>
     <main className="main-shell">
-      <SessionBar user={user}/>
+      <div className="workspace-account">
+        <p className="workspace-credit">An Internal Web Application by GTI Marketing Department</p>
+        <SessionBar user={user}/>
+      </div>
       <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} allowedCompanies={user.allowed_companies} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
       <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]!} initialEmployee={selection.employee} saveEmployee={next=>{drafts.current[companyId]=next;}} onExportBusyChange={setExportBusy}/>
     </main>
@@ -76,6 +79,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
   const [touched,setTouched]=useState<Set<string>>(new Set());
   const [submitted,setSubmitted]=useState(false);
   const [acknowledge,setAcknowledge]=useState(false);
+  const [showQrReminder, setShowQrReminder] = useState(false);
   const [showMobile,setShowMobile]=useState(false);
   const currentEmployee = useRef(employee);
   useEffect(()=>{
@@ -110,6 +114,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
     dispatch({ type: 'change', employee: next });
     saveEmployee(next);
     setAcknowledge(false);
+    setShowQrReminder(false);
     setDownloadError('');
   };
   const update = <K extends keyof Employee>(key: K, value: Employee[K]) => {
@@ -120,8 +125,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
   const formIssues = useMemo(() => editorIssues(employee, companyId, confirmed), [employee, companyId, confirmed]);
   const fieldError=(field:keyof Employee)=>formIssues.find(i=>i.field===field&&i.severity==='error'&&visible(i));
   const errors=formIssues.filter(i=>i.severity==='error');
-  const warnings=formIssues.filter(i=>i.severity==='warning');
-  const densityWarning=warnings.find(i=>i.code==='qr-density');
+  const densityWarning=formIssues.find(i=>i.code==='qr-density' && i.severity==='warning');
   const complete=['firstName','lastName','designation','email','mobile'].filter(key=>String(employee[key as keyof Employee]).trim()).length;
   const ready=!!confirmed && errors.length===0;
   const field=(key:keyof Employee,label:string,placeholder:string,required=false,type='text',hint?:string)=>{
@@ -144,7 +148,12 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
     setSubmitted(true);setDownloadError('');
     if (!confirmed || currentEmployee.current !== employee) return;
     if(errors.length){setDownloadError('Complete the highlighted details before downloading.');document.querySelector<HTMLInputElement>(`[name="${errors[0].field}"]`)?.focus();return;}
-    if(warnings.length&&!acknowledge){setDownloadError('Review and acknowledge the QR print guidance below.');return;}
+    if (densityWarning && !acknowledge) {
+      setNotice('');
+      setShowQrReminder(true);
+      document.getElementById('qr-print-acknowledgement')?.focus();
+      return;
+    }
     setBusy(format);onExportBusyChange(true);
     try{
       const response=await fetch('/api/export',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({companyId,employee,settings:{sides,dpi,format,acknowledgeQrWarning:acknowledge}})});
@@ -187,7 +196,7 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
         {renderError&&<p role="alert" className="inline-error">{renderError}</p>}
         {showMobile&&<div id="qr-inspection" className="scan-panel">{!confirmed ? <p>{updating ? 'Updating your card…' : 'Preview unavailable'}</p> : confirmed.qr?<><div dangerouslySetInnerHTML={qrMarkup}/><p>Scan to check your contact.<span>This enlarged view checks the data. Scan a printed proof at final size before ordering.</span></p></>:<p>QR preview unavailable. Check your contact details.</p>}</div>}
       </section>
-      <ExportPanel sides={sides} setSides={value=>{setSides(value);sessionStorage.setItem(storageKey,value);}} dpi={dpi} setDpi={setDpi} busy={busy} updating={updating} renderError={renderError} download={download} densityWarning={densityWarning} acknowledge={acknowledge} setAcknowledge={setAcknowledge} submitted={submitted} errors={errors} downloadError={downloadError}/>
+      <ExportPanel sides={sides} setSides={value=>{setSides(value);sessionStorage.setItem(storageKey,value);}} dpi={dpi} setDpi={setDpi} busy={busy} updating={updating} renderError={renderError} download={download} densityWarning={densityWarning} acknowledge={acknowledge} showQrReminder={showQrReminder} setAcknowledge={value=>{setAcknowledge(value);setShowQrReminder(false);}} submitted={submitted} errors={errors} downloadError={downloadError}/>
     </div>
     {notice&&<div className="toast" role="status"><span className="toast-icon"><Check size={16}/></span><span>{notice}</span><button type="button" aria-label="Dismiss notification" onClick={()=>setNotice('')}><X size={15}/></button></div>}
   </div>;
