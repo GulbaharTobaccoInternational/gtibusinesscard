@@ -19,12 +19,15 @@ function forEachDarkRun(matrix: Matrix, visit: (row: number, start: number, leng
 
 // The on-screen QR uses the same encoded runs and quiet zone as the print artwork.
 // Integer module coordinates avoid sending a second set of millimetre paths to the browser.
-export function qrPreviewSvg(matrix: Matrix, quiet: number, moduleMm: number) {
+export function qrPreviewSvg(matrix: Matrix, quiet: number, moduleMm: number, position?: { x: number; y: number }) {
   const runs: string[] = [];
   forEachDarkRun(matrix, (row, start, length) => runs.push(`M${start} ${row}h${length}v1H${start}z`));
   const size = matrix.size + 2 * quiet;
   const mm = size * moduleMm;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${mm}mm" height="${mm}mm" viewBox="${-quiet} ${-quiet} ${size} ${size}" role="img" aria-label="Business card"><rect x="${-quiet}" y="${-quiet}" width="${size}" height="${size}" fill="white"/><path fill="black" d="${runs.join('')}"/></svg>`;
+  const bounds = position
+    ? `x="${position.x - quiet * moduleMm}" y="${position.y - quiet * moduleMm}" width="${mm}" height="${mm}"`
+    : `width="${mm}mm" height="${mm}mm"`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" ${bounds} viewBox="${-quiet} ${-quiet} ${size} ${size}" role="img" aria-label="Business card"><rect x="${-quiet}" y="${-quiet}" width="${size}" height="${size}" fill="white"/><path fill="black" d="${runs.join('')}"/></svg>`;
 }
 export function createQr(employee: Employee, companyId: CompanyId = 'gti') {
   const DESIGN = getTemplate(companyId).design;
@@ -39,7 +42,7 @@ export function createQr(employee: Employee, companyId: CompanyId = 'gti') {
     paths.push(rectangle(x+start*moduleMm,y+row*moduleMm,length*moduleMm,moduleMm,BLACK));
   });
   const issues: Issue[] = [];
-  if (moduleMm < DESIGN.qr.minModuleMm) issues.push({field:'qr',severity:'error',code:'qr-too-dense',message:'These contact details make the QR too dense for the approved size. Remove optional QR numbers or disable the QR code.'});
+  if (moduleMm < DESIGN.qr.minModuleMm) issues.push({field:'qr',severity:'error',code:'qr-too-dense',message:'These contact details make the QR too dense for the approved size. Remove optional contact details and try again.'});
   else if (moduleMm < DESIGN.qr.warnModuleMm) issues.push({field:'qr',severity:'warning',code:'qr-density',message:`This QR has ${modules} modules (${moduleMm.toFixed(3)} mm each). Use 600 DPI and scan a printed proof before ordering. You can reduce density by removing optional QR details.`});
   return { paths, payload, modules, moduleMm, matrix: code.modules, version: code.version, issues };
 }

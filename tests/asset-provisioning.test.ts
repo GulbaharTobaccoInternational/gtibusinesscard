@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import sharp from 'sharp';
 import { BUNDLE_FILE, FONT_FILES, encryptFonts, hashAsset, prepareAssets } from '../scripts/font-bundle.mjs';
 
 const approvedFonts = Object.fromEntries(FONT_FILES.map(name=>[name,Buffer.from(`approved font fixture: ${name}`)]));
@@ -71,4 +72,14 @@ test('the bundle contains no plaintext font data and malformed keys are rejected
     }
     assert.throws(() => prepareAssets(f.directory, 'not-a-valid-secret'), /64-character hexadecimal/);
   } finally { f.cleanup(); }
+});
+
+test('header web assets preserve the approved SVG paths and RGBA sprite pixels', async () => {
+  const originalLogo = fs.readFileSync('public/brand/gti-logo-black.svg', 'utf8');
+  const webLogo = fs.readFileSync('public/brand/gti-logo-black-web.svg', 'utf8');
+  assert.equal(webLogo, originalLogo.replace(/  <metadata>[\s\S]*?<\/metadata>\n/, ''));
+  const decoded = (extension: string) => sharp('public/brand/appreciation-reactions.' + extension).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const [original, web] = await Promise.all([decoded('png'), decoded('webp')]);
+  assert.deepEqual(web.info, original.info);
+  assert.ok(web.data.equals(original.data));
 });

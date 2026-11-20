@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { emailSchema } from './access';
 
-export const PASSWORD_MIN_LENGTH=6; // Existing Supabase policy; Auth enforces its configured policy too.
+import { PASSWORD_MIN_LENGTH } from './password-policy';
+export { PASSWORD_MIN_LENGTH } from './password-policy';
 export const RESET_CONFIRMATION="If your email is registered, you'll receive password reset instructions.";
 export const SETUP_CONFIRMATION="If your email is approved, you'll receive secure password setup instructions.";
 export const CREDENTIALS_ERROR='The email address or password is incorrect.';

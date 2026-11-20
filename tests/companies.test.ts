@@ -10,7 +10,7 @@ import { DEMO_EMPLOYEES, isDemoEmployee } from '../src/lib/demo';
 import { buildCard, sceneToSvg, previewCard } from '../src/lib/renderer';
 import { exportCard, exportRequestSchema } from '../src/lib/export';
 import { serializeVCard } from '../src/lib/vcard';
-import { DOUBLE_LEAF_DESIGN } from '../src/lib/templates';
+import { DOUBLE_LEAF_DESIGN, getTemplate } from '../src/lib/templates';
 import baseline from './fixtures/gti-approved-digests.json';
 const hash=(data:unknown)=>crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
 
@@ -86,3 +86,48 @@ for(const companyId of COMPANY_IDS){
     const file=await exportCard(DEMO_EMPLOYEES[companyId],{sides:'both',format:'png',dpi:300,acknowledgeQrWarning:true},companyId);const zip=await JSZip.loadAsync(file.bytes);const names=Object.keys(zip.files);assert.equal(names.length,2);assert.ok(names.every(n=>n.startsWith(COMPANIES[companyId].exportPrefix+'_')));assert.ok(names.some(n=>n.endsWith('_Front.png'))&&names.some(n=>n.endsWith('_Back.png')));
   });
 }
+
+for (const companyId of COMPANY_IDS) {
+  test(`${companyId}: compact screen preview preserves QR placement and decodes to the printed contact`, async () => {
+    const employee = DEMO_EMPLOYEES[companyId];
+    const compact = previewCard(employee, companyId);
+    const card = buildCard(employee, companyId);
+    const q = getTemplate(companyId).design.qr;
+    const quiet = q.quietModules * card.qr!.moduleMm;
+    assert.ok(compact.front.includes(`x="${q.x - quiet}" y="${q.y - quiet}"`));
+    const raster = (svg: string) => {
+      const sized = svg.replace('width="92mm" height="57mm"', 'width="1087" height="673"');
+      return sharp(Buffer.from(sized)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+    };
+    const [preview, approved] = await Promise.all([raster(compact.front), raster(sceneToSvg(card.front))]);
+    assert.equal(jsQR(new Uint8ClampedArray(preview.data), preview.info.width, preview.info.height)?.data, serializeVCard(employee, companyId));
+    // Outside the QR and its quiet zone, every approved artwork pixel stays identical.
+    const scale = 300 / 25.4;
+    const x1 = Math.floor((q.x - quiet) * scale), x2 = Math.ceil((q.x + q.size + quiet) * scale);
+    const y1 = Math.floor((q.y - quiet) * scale), y2 = Math.ceil((q.y + q.size + quiet) * scale);
+    for (let y = 0; y < preview.info.height; y++) {
+      const row = y * preview.info.width * 4;
+      const ranges = y < y1 || y >= y2 ? [[0, preview.info.width]] : [[0, x1], [x2, preview.info.width]];
+      for (const [start, end] of ranges) {
+        assert.ok(preview.data.subarray(row + start * 4, row + end * 4).equals(approved.data.subarray(row + start * 4, row + end * 4)));
+      }
+    }
+  });
+}
+
+test('a shared template back is identical for different employees while PNG fronts remain personal', async () => {
+  const settings = { format: 'png', sides: 'both', dpi: 300, acknowledgeQrWarning: true } as const;
+  for (const company of COMPANY_IDS) {
+    const sample = DEMO_EMPLOYEES[company];
+    const employees = [sample, { ...sample, firstName: 'Robin' }];
+    const sides = await Promise.all(employees.map(async employee => {
+      const file = await exportCard(employee, settings, company);
+      const zip = await JSZip.loadAsync(file.bytes);
+      const front = await zip.file(/_Front\.png$/)[0].async('nodebuffer');
+      const back = await zip.file(/_Back\.png$/)[0].async('nodebuffer');
+      return { front, back };
+    }));
+    assert.ok(sides[0].back.equals(sides[1].back));
+    assert.ok(!sides[0].front.equals(sides[1].front));
+  }
+});

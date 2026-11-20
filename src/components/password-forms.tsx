@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState, useEffect, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, LoaderCircle, Mail, ShieldCheck } from 'lucide-react';
 import { PasswordInput } from './password-input';
-import { PASSWORD_MIN_LENGTH } from '@/lib/password-auth';
+import { PASSWORD_MIN_LENGTH } from '@/lib/password-policy';
 
 function FormError({message}:{message:string}){return message?<div className="login-error" role="alert"><p>{message}</p></div>:null;}
 function SubmitButton({busy,label,busyLabel}:{busy:boolean;label:string;busyLabel:string}){return <button className="button print-button login-submit" type="submit" disabled={busy}>{busy?<LoaderCircle className="spinner" size={18}/>:null}<span>{busy?busyLabel:label}</span>{!busy&&<ArrowRight size={19}/>}</button>;}

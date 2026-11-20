@@ -13,8 +13,9 @@ export async function proxy(request:NextRequest){
       for(const {name,value,options} of items)response.cookies.set(name,value,options);
     }},
   });
-  // Validates/refreshes the session; routes also check the current authorization row.
-  await supabase.auth.getUser();
+  // Refresh expiring cookies here. Every protected page and API independently verifies
+  // the user with Auth and checks their current authorization. No cookie identity is trusted here.
+  await supabase.auth.getSession();
   response.headers.set('Cache-Control','private, no-store, max-age=0');
   return response;
 }
