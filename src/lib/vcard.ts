@@ -25,10 +25,11 @@ export function serializeVCard(employee: Employee, companyId: CompanyId = 'gti')
   ];
   const tel = (value: string, type: string) => { if (value) lines.push(`TEL;TYPE=${type}:${esc(value)}`); };
   tel(employee.mobile, 'CELL,VOICE');
-  tel(employee.workPhone + (employee.workPhone && employee.extension ? ` x${employee.extension}` : ''), 'WORK,VOICE');
+  const directLine = employee.workPhone && employee.extension ? `${employee.workPhone} x${employee.extension}` : employee.workPhone;
+  tel(directLine, 'WORK,VOICE');
   tel(employee.companyMobile, 'WORK,CELL'); tel(employee.privatePhone, 'HOME,VOICE');
   tel(employee.additionalPhone, 'VOICE'); tel(employee.workFax, 'WORK,FAX'); tel(employee.privateFax, 'HOME,FAX');
-  if (employee.includeCompanyPhone && COMPANY.telephone && employee.workPhone !== COMPANY.telephone) tel(COMPANY.telephone, 'WORK,VOICE');
+  if (COMPANY.telephone !== directLine) tel(COMPANY.telephone, 'WORK,VOICE');
   lines.push(`ADR;TYPE=WORK:${esc(COMPANY.poBox)};;${esc(COMPANY.street)};${esc(COMPANY.city)};${esc(COMPANY.state)};;${esc(COMPANY.country)}`);
   lines.push('END:VCARD');
   return lines.map(foldLine).join('\r\n') + '\r\n';

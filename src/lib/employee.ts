@@ -10,14 +10,13 @@ export const employeeSchema = z.object({
   additionalPhone: phone, workFax: phone, privateFax: phone,
   extension: z.string().trim().max(8),
   primaryMobile: z.enum(['mobile', 'companyMobile', 'privatePhone', 'additionalPhone', 'workPhone', 'none']),
-  includeCompanyPhone: z.boolean(),
 });
 export type Employee = z.infer<typeof employeeSchema>;
 export type Issue = { field: keyof Employee | 'qr' | 'assets'; message: string; severity: 'error' | 'warning'; code: string };
 export const EMPTY_EMPLOYEE: Employee = {
   firstName: '', lastName: '', designation: '', email: '', mobile: '', workPhone: '', companyMobile: '',
   privatePhone: '', additionalPhone: '', workFax: '', privateFax: '', extension: '',
-  primaryMobile: 'mobile', includeCompanyPhone: true,
+  primaryMobile: 'mobile',
 };
 const emailFormat = z.email();
 export function validateEmployee(employee: Employee, companyId: CompanyId = 'gti'): Issue[] {

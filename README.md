@@ -33,7 +33,7 @@ Existing users can choose **Create your password** on the sign-in page. Administ
 - Digital PDF uses outlined RGB artwork. PNG supports 300/600 DPI, either one front image or a ZIP containing separate front/back images.
 - Filenames include the selected company and safely sanitized employee name.
 - Shared validation blocks missing required data, unsupported glyphs, text overflow and excessive QR density. QR print warnings require acknowledgment before export.
-- Extra phone roles are available in the QR. Double Leaf can print a selected employee mobile/direct office number. Its general company telephone is intentionally empty until a verified number is supplied.
+- The QR automatically includes the selected company’s approved general telephone when configured. Extra employee phone roles remain available. Double Leaf can print a selected employee mobile/direct office number. Its general company telephone is intentionally empty until a verified number is supplied.
 
 ## Architecture and source accuracy
 

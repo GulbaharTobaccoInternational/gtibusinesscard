@@ -75,7 +75,7 @@ for(const companyId of COMPANY_IDS){
   });
   test(`${companyId}: mandatory QR decodes from legacy full-card PNG requests at 300 and 600 DPI`,async()=>{
     for(const dpi of [300,600] as const){
-      const legacy = { ...DEMO_EMPLOYEES[companyId], includeQr: false };
+      const legacy = { ...DEMO_EMPLOYEES[companyId], includeQr: false, includeCompanyPhone: false };
       const file=await exportCard(legacy,{sides:'front',format:'png',dpi,acknowledgeQrWarning:true},companyId);
       const {data,info}=await sharp(file.bytes).ensureAlpha().raw().toBuffer({resolveWithObject:true});
       assert.equal(jsQR(new Uint8ClampedArray(data),info.width,info.height)?.data,serializeVCard(DEMO_EMPLOYEES[companyId],companyId));

@@ -18,7 +18,7 @@ assert.equal((await fetch(base+'/api/render',{method:'POST',headers:{'Content-Ty
 const page=await fetch(base,{headers:{Cookie:cookie}});assert.equal(page.status,200);const html=await page.text();assert.ok(html.includes('Mr Ghashi'));assert.ok(html.replace(/<[^>]*>/g,'').includes('An Internal Web Application by GTI Marketing Department'));assert.ok(html.includes('Additional QR / vCard Details'));assert.ok(html.includes('Double Leaf'));
 assert.ok(html.includes('Love our digital upgrade?'));assert.ok(html.includes('Give GTI Marketing Team some credit!'));assert.ok(html.includes('Gulbahar Tobacco International'));
 for(const label of ['Applause','Great Job','Coffee Treat','Hats Off'])assert.ok(html.includes(`aria-label="${label}"`));
-for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
+for(const removed of ['Your next introduction.','Number printed on card','Your details stay in this session.','Zoom out','Zoom in','Official business card template','Give credit','Include company telephone in QR','Made for good introductions.','Help &amp; print guide'])assert.ok(!html.includes(removed),`Removed UI text remains: ${removed}`);
 assert.match(html,/<link[^>]+href="\/favicon\.ico\?[^" ]+"/);
 for(const [path,size] of [['/brand/favicon-16x16.png',16],['/brand/favicon-32x32.png',32],['/brand/apple-touch-icon.png',180]] as const){const icon=await fetch(base+path);assert.equal(icon.status,200);const metadata=await sharp(await icon.arrayBuffer()).metadata();assert.equal(metadata.width,size);assert.equal(metadata.height,size);assert.equal(metadata.hasAlpha,true);}
 assert.equal((await fetch(base+'/favicon.ico')).status,200);
@@ -30,8 +30,10 @@ assert.equal((await post('/api/render',DEMO_EMPLOYEES.gti,'https://unrelated.tes
 for(const companyId of COMPANY_IDS){
  // Smoke checks must not send appreciation email as a side effect.
  const feedback=await post('/api/feedback',{reactionId:'invalid',companyId,submissionId:crypto.randomUUID()});assert.equal(feedback.status,400);
- const employee=DEMO_EMPLOYEES[companyId];
+ const employee={...DEMO_EMPLOYEES[companyId],includeQr:false,includeCompanyPhone:false};
  const preview=await post('/api/render',{companyId,employee});assert.equal(preview.status,200);assert.match(preview.headers.get('Cache-Control')??'',/no-store/);const result=await preview.json();assert.equal(result.companyId,companyId);assert.ok(result.front.includes('<path'));assert.ok(!result.front.includes('<text'));assert.equal(result.qr.payload,serializeVCard(employee,companyId));
+ const workLines=result.qr.payload.split('\r\n').filter((line:string)=>line.startsWith('TEL;TYPE=WORK,VOICE:'));
+ assert.deepEqual(workLines,companyId==='gti'?['TEL;TYPE=WORK,VOICE:+971 4 881 4800']:[]);
  assert.equal((await post('/api/export',{companyId,employee:{...employee,email:'invalid'},settings:{format:'print',sides:'both',dpi:600,acknowledgeQrWarning:true}})).status,422);
  for(const format of ['print','digital'])for(const sides of ['front','both']){
   const response=await post('/api/export',{companyId,employee,settings:{format,sides,dpi:600,acknowledgeQrWarning:true}});assert.equal(response.status,200);assert.equal(response.headers.get('Content-Type'),'application/pdf');assert.ok(response.headers.get('Content-Disposition')!.includes(COMPANIES[companyId].exportPrefix+'_'));

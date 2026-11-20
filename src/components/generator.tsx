@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useReducer, useRef, useState, type CSSProperties } from 'react';
-import { Check, ChevronDown, CircleHelp, Copy, Download, LoaderCircle, QrCode, RotateCcw, ShieldCheck, Sparkles, X } from 'lucide-react';
+import { Check, ChevronDown, Copy, Download, LoaderCircle, QrCode, RotateCcw, Sparkles, X } from 'lucide-react';
 import { EMPTY_EMPLOYEE, type Employee, type Issue } from '@/lib/employee';
 import { currentPreview, editorIssues, editorPreviewReducer, initialEditorPreview } from '@/lib/editor-preview';
 import { getCompany, type CompanyId } from '@/lib/company';
@@ -13,7 +13,6 @@ import type { ExportSettings } from '@/lib/export';
 import { GtiLogo, MrGhashiBrand } from './brand-art';
 import { CompanySwitcher } from './company-switcher';
 import { Appreciation } from './appreciation';
-import { AppDialog } from './dialog';
 import { ExportPanel } from './export-panel';
 import { SessionBar } from './session-bar';
 
@@ -24,7 +23,6 @@ export default function Generator({initials,user}:Props){
   const [selection, setSelection] = useState({ companyId: user.allowed_companies[0], employee: EMPTY_EMPLOYEE });
   const { companyId } = selection;
   const [exportBusy,setExportBusy]=useState(false);
-  const [showHelp,setShowHelp]=useState(false);
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
@@ -53,9 +51,7 @@ export default function Generator({initials,user}:Props){
       <SessionBar user={user}/>
       <div className="workspace-heading"><div className="workspace-actions"><CompanySwitcher companyId={companyId} allowedCompanies={user.allowed_companies} disabled={exportBusy} onChange={switchCompany}/><a className="export-shortcut" href="#export-options"><Download size={16}/>Export card</a></div></div>
       <CompanyGenerator key={companyId} companyId={companyId} initial={initials[companyId]!} initialEmployee={selection.employee} saveEmployee={next=>{drafts.current[companyId]=next;}} onExportBusyChange={setExportBusy}/>
-      <footer className="page-footer"><span>Mr Ghashi <span className="footer-divider">/</span> Your Biz Card Genius</span><span className="footer-note">Made for good introductions.</span><button type="button" className="text-button footer-help" onClick={event=>{event.currentTarget.focus();setShowHelp(true);}}><CircleHelp size={14}/>Help &amp; print guide</button></footer>
     </main>
-    {showHelp&&<AppDialog titleId="help-title" className="help-dialog" onClose={()=>setShowHelp(false)}><span className="eyebrow">A QUICK GUIDE</span><h2 id="help-title">A great card, in a few steps.</h2><ol><li><strong>Make it yours.</strong> Select your company and enter your employee details, or try the fictional sample.</li><li><strong>Check your card.</strong> Review both sides and scan the QR to confirm the digital contact.</li><li><strong>Choose your download.</strong> Select Front Only or Front + Back, then export.</li></ol><div className="help-note"><ShieldCheck size={20}/><p>For your printer, choose Print-Ready PDF. Your card is 92 × 57 mm with vector outlines and no extra bleed. Print at 100% scale.</p></div><p>Company details and approved templates are maintained by GTI Marketing. Unsupported characters and text that exceeds the approved layout are flagged before export.</p><button type="button" className="button print-button" onClick={()=>setShowHelp(false)}>Got it</button></AppDialog>}
   </div>;
 }
 function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExportBusyChange}:CompanyProps){
@@ -182,7 +178,6 @@ function CompanyGenerator({initial,companyId,initialEmployee,saveEmployee,onExpo
         </div></details>
         <section className="qr-settings" aria-label="QR Code"><div className="qr-settings-heading"><h3>Digital contact</h3></div>
           <div className="qr-info"><div className="qr-mini" dangerouslySetInnerHTML={qrMarkup}/><div><strong>One scan. All your details.</strong><p>A contact that is ready to save.</p><span className="vcard-label">vCard 3.0</span></div></div>
-            {COMPANY.telephone&&<label className="check-label company-qr-check"><input type="checkbox" checked={employee.includeCompanyPhone} onChange={event=>update('includeCompanyPhone',event.target.checked)}/> Include company telephone in QR</label>}
             <button className="text-button inspect-button" type="button" onClick={()=>setShowPayload(!showPayload)}><QrCode size={15}/>{showPayload?'Hide':'View'} QR / vCard details<ChevronDown size={14} className={showPayload?'rotate-icon':''}/></button>
             {showPayload&&<div className="payload-panel"><pre>{confirmed?.qr?.payload}</pre><button disabled={!confirmed?.qr} type="button" className="text-button" onClick={async()=>{try{await navigator.clipboard.writeText(confirmed?.qr?.payload??'');setNotice('vCard details copied.');}catch{setNotice('Select and copy the contact details above.');}}}><Copy size={13}/> Copy vCard</button></div>}
         </section>

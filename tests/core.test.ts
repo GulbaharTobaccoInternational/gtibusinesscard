@@ -36,10 +36,18 @@ test('escaping and UTF-8 folding preserve values without splitting characters',(
  const unicode=serializeVCard({...sample,firstName:'José',lastName:'Müller'});
  assert.ok(unicode.includes('N:Müller;José;;;'));
 });
-test('unused optional properties are omitted and company telephone is selectable',()=>{
- const text=serializeVCard({...sample,includeCompanyPhone:false});
- assert.ok(!text.includes(COMPANY.telephone));assert.ok(!text.includes('HOME'));assert.ok(!text.includes('FAX'));
- assert.ok(!text.includes('undefined'));assert.ok(!text.includes('null'));
+test('the approved main telephone always survives legacy opt-outs and unused phone roles stay absent', () => {
+ const legacy = { ...sample, includeCompanyPhone: false };
+ const main = `TEL;TYPE=WORK,VOICE:${COMPANY.telephone}`;
+ const text = serializeVCard(employeeSchema.parse(legacy));
+ assert.ok(text.split('\r\n').includes(main));
+ assert.equal(serializeVCard(legacy), text);
+ assert.ok(!text.includes('HOME') && !text.includes('FAX'));
+ assert.ok(!text.includes('undefined') && !text.includes('null'));
+ const sameNumber = { ...sample, workPhone: COMPANY.telephone };
+ assert.equal(serializeVCard(sameNumber).split('\r\n').filter(line => line === main).length, 1);
+ const withExtension = serializeVCard({ ...sameNumber, extension: '123' }).split('\r\n');
+ assert.ok(withExtension.includes(main) && withExtension.includes(main + ' x123'));
 });
 test('names, designation and contact overflow are detected without truncation',()=>{
  const longName=buildCard({...sample,firstName:'Alexanderson '.repeat(12)});
