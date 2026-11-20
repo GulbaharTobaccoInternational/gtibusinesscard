@@ -1,7 +1,7 @@
 import { getAssets } from './assets';
 import { WHITE, rectangle, type Scene } from './design';
 import { type Employee, validateEmployee } from './employee';
-import { createQr } from './qr';
+import { createQr, qrPreviewSvg } from './qr';
 import type { CompanyId } from './company';
 import { getTemplate } from './templates';
 import { createTextWriter } from './render-context';
@@ -36,6 +36,6 @@ export function previewCard(employee: Employee, companyId: CompanyId = 'gti') {
   const card = buildCard(employee, companyId);
   const q = getTemplate(companyId).design.qr;
   return { companyId, front:sceneToSvg(card.front), back:sceneToSvg(card.back), issues:card.issues, nameScale:card.nameScale,
-    qr:card.qr?{ svg:sceneToSvg({widthMm:q.size+8*card.qr.moduleMm,heightMm:q.size+8*card.qr.moduleMm,paths:card.qr.paths.map(p=>({...p,d:p.d.replace(/([ML])(-?[\d.]+) (-?[\d.]+)/g,(_,op,x,y)=>`${op}${Number(x)-q.x+4*card.qr!.moduleMm} ${Number(y)-q.y+4*card.qr!.moduleMm}`)}))}),payload:card.qr.payload,modules:card.qr.modules,moduleMm:card.qr.moduleMm}:null };
+    qr:card.qr?{ svg:qrPreviewSvg(card.qr.matrix,q.quietModules,card.qr.moduleMm),payload:card.qr.payload,modules:card.qr.modules,moduleMm:card.qr.moduleMm}:null };
 }
 export type PreviewResult = ReturnType<typeof previewCard>;

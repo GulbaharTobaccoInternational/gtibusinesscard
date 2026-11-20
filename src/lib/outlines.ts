@@ -1,11 +1,17 @@
 import type { Font } from 'fontkit';
 import type { VectorPath, Color } from './design';
 const round = (value: number) => Number(value.toFixed(6));
+function runWidth(run: ReturnType<Font['layout']>, scale: number, tracking: number) {
+  return run.positions.reduce((sum, p) => sum + p.xAdvance * scale, 0) + Math.max(0, run.glyphs.length - 1) * tracking;
+}
+export function textWidth(text: string, font: Font, size: number, trackingEm: number) {
+  return runWidth(font.layout(text), size / font.unitsPerEm, trackingEm * size);
+}
 export function textOutlines(text: string, font: Font, options: { x?: number; right?: number; baseline: number; size: number; trackingEm: number; color: Color; strokeWidth?: number }) {
   const run = font.layout(text);
   const scale = options.size / font.unitsPerEm;
   const tracking = options.trackingEm * options.size;
-  const width = run.positions.reduce((sum, p) => sum + p.xAdvance * scale, 0) + Math.max(0, run.glyphs.length - 1) * tracking;
+  const width = runWidth(run, scale, tracking);
   // Right-align the actual ink, like the outlined Illustrator reference.
   const last = run.glyphs.at(-1); const lastPosition = run.positions.at(-1);
   const lastTrailing = last && lastPosition ? (lastPosition.xAdvance - last.bbox.maxX - lastPosition.xOffset) * scale : 0;

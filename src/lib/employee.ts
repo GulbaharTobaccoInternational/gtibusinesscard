@@ -19,21 +19,24 @@ export const EMPTY_EMPLOYEE: Employee = {
   privatePhone: '', additionalPhone: '', workFax: '', privateFax: '', extension: '',
   primaryMobile: 'mobile', includeQr: true, includeCompanyPhone: true,
 };
+const emailFormat = z.email();
 export function validateEmployee(employee: Employee, companyId: CompanyId = 'gti'): Issue[] {
   const issues: Issue[] = [];
   const add = (field: keyof Employee, message: string) => issues.push({ field, message, severity: 'error', code: `invalid-${field}` });
   for (const field of ['firstName', 'lastName', 'designation', 'email'] as const) {
     if (!employee[field].trim()) add(field, `${({firstName:'First name',lastName:'Last name',designation:'Job title',email:'Email'})[field]} is required.`);
   }
-  if (employee.email && !z.email().safeParse(employee.email).success) add('email', 'Enter a valid email address.');
+  const email = employee.email.trim();
+  if (email && !emailFormat.safeParse(email).success) add('email', 'Enter a valid email address.');
   for (const key of phoneKeys) {
-    const value = employee[key];
+    const value = employee[key].trim();
     if (value && (!/^(?:\+|00)[0-9 ()-]+$/.test(value) || !/^[0-9]{7,15}$/.test(value.replace(/^(?:\+|00)/, '').replace(/[^0-9]/g, '')))) {
       add(key, 'Use an international number starting with + or 00, with 7–15 digits.');
     }
   }
-  if (employee.extension && !/^\d{1,8}$/.test(employee.extension)) add('extension', 'Use up to 8 digits for the extension.');
-  if (employee.extension && !employee.workPhone) add('extension', 'Add a work phone before entering an extension.');
+  const extension = employee.extension.trim();
+  if (extension && !/^\d{1,8}$/.test(extension)) add('extension', 'Use up to 8 digits for the extension.');
+  if (extension && !employee.workPhone.trim()) add('extension', 'Add a work phone before entering an extension.');
   if (employee.primaryMobile !== 'none' && !employee[employee.primaryMobile] && phoneKeys.some(k => (['mobile','companyMobile','privatePhone','additionalPhone'].includes(k)||(companyId==='doubleLeaf'&&k==='workPhone')) && employee[k])) {
     add('primaryMobile', 'Select an available number to print, or choose no printed mobile.');
   }
