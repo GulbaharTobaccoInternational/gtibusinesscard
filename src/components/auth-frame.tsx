@@ -4,9 +4,9 @@ import type { ReactNode } from 'react';
 import { GtiLogo } from './brand-art';
 
 const steps = [
-  { title: 'Enter details', detail: 'Name, job title, email, mobile' },
-  { title: 'Preview live', detail: 'See the front and back instantly' },
-  { title: 'Download', detail: 'Print-ready file, correct resolution' },
+  { title: 'Enter details', detail: 'Name, job title, email,\nmobile' },
+  { title: 'Preview live', detail: 'See the front and\nback instantly' },
+  { title: 'Download', detail: 'Print-ready file, correct\nresolution' },
 ];
 
 export function AuthFrame({ children }: { children: ReactNode }) {
