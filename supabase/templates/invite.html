@@ -30,14 +30,16 @@
       .note-icon { width: 32px !important; }
       .note-copy { padding-left: 12px !important; font-size: 15px !important; line-height: 21px !important; }
     }
-    /* Outlook clients that expose their dark-mode attributes can retain the approved palette. */
-    [data-ogsb] .canvas, [data-ogsc] .canvas { background-color:#faf8f6 !important; }
-    [data-ogsb] .card, [data-ogsc] .card, [data-ogsb] .paper, [data-ogsc] .paper { background-color:#ffffff !important; }
-    [data-ogsb] .note, [data-ogsc] .note { background-color:#fbf5f3 !important; }
-    [data-ogsc] .heading { color:#351c16 !important; }
-    [data-ogsc] .body-copy, [data-ogsc] .note-copy { color:#29252e !important; }
-    [data-ogsb] .button-cell, [data-ogsc] .cta { background-color:#c9002c !important; color:#ffffff !important; }
-    [data-ogsc] .site-link { color:#ae0026 !important; }
+    /* Keep foregrounds and surfaces paired when webmail rewrites inline colors. */
+    .canvas { background-color:#faf8f6 !important; }
+    .card, .paper { background-color:#ffffff !important; }
+    .note, .note-layout, .note-icon, .note-copy { background-color:#fbf5f3 !important; }
+    .heading { color:#351c16 !important; }
+    .body-copy { color:#29252e !important; }
+    .note-copy { color:#302a33 !important; }
+    .button-cell, .cta { background-color:#c9002c !important; color:#ffffff !important; }
+    .cta span { color:#ffffff !important; }
+    .site-link { color:#ae0026 !important; }
   </style>
 </head>
 <body class="canvas" bgcolor="#faf8f6" style="color-scheme:only light; margin:0; padding:0; background-color:#faf8f6; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
@@ -48,8 +50,8 @@
           <img src="https://www.mrghashi.com/brand/email/mr-ghashi-white.png" alt="Mr Ghashi — Your Biz Card Genius" width="432" style="display:block; width:432px; max-width:100%; height:auto; border:0; color:#4d271b; font-size:20px; font-weight:bold;">
         </td></tr>
         <tr><td class="inner content paper" bgcolor="#ffffff" style="background-color:#ffffff; padding:0 32px;">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%; table-layout:fixed; border-top:1px solid #ded3cd;">
-            <tr><td style="padding:22px 0 0; font-size:0; line-height:0;">
+          <table class="paper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="background-color:#ffffff; width:100%; table-layout:fixed; border-top:1px solid #ded3cd;">
+            <tr><td class="paper" bgcolor="#ffffff" style="background-color:#ffffff; padding:22px 0 0; font-size:0; line-height:0;">
               <img src="https://www.mrghashi.com/brand/email/heading-rays.png" width="46" height="28" alt="" style="display:block; border:0;">
             </td></tr>
             <tr><td class="copy paper" align="left" valign="top" bgcolor="#ffffff" style="background-color:#ffffff; padding:0 20px;">
@@ -57,7 +59,7 @@
               <p class="body-copy" style="margin:16px 0 0; font-size:20px; line-height:27px; color:#29252e;">Your account has been approved. You're just one step away from creating official business cards for your company.</p>
               <p class="body-copy" style="margin:14px 0 0; font-size:20px; line-height:27px; color:#29252e;">Set up your password to access your personal Mr Ghashi workspace.</p>
             </td></tr>
-            <tr><td align="center" style="padding:24px 0;">
+            <tr><td class="paper" align="center" bgcolor="#ffffff" style="background-color:#ffffff; padding:24px 0;">
               <table role="presentation" class="cta-table" width="356" cellspacing="0" cellpadding="0" border="0" style="width:356px; max-width:100%; table-layout:fixed;">
                 <tr><td class="button-cell" align="center" bgcolor="#c9002c" style="background-color:#c9002c; border-radius:12px; mso-padding-alt:16px 20px;">
                   <a class="cta" href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=invite&amp;next={{ .RedirectTo }}" style="display:block; padding:15px 12px; background-color:#c9002c; border-radius:12px; color:#ffffff; font-family:Arial,Helvetica,sans-serif; font-size:22px; font-weight:700; line-height:28px; text-align:center; text-decoration:none; mso-text-raise:1pt;">Create My Password&nbsp; <span aria-hidden="true" style="font-size:28px; line-height:24px; vertical-align:-1px;">&#8594;</span></a>
@@ -65,21 +67,21 @@
               </table>
             </td></tr>
             <tr><td class="note" bgcolor="#fbf5f3" style="padding:18px 20px; background-color:#fbf5f3; border-radius:14px;">
-              <table role="presentation" class="note-layout" width="100%" height="69" cellspacing="0" cellpadding="0" border="0" style="height:69px;">
-                <tr><td class="note-icon" width="55" valign="middle" style="width:55px; padding:0;">
+              <table role="presentation" class="note-layout" width="100%" height="69" cellspacing="0" cellpadding="0" border="0" bgcolor="#fbf5f3" style="background-color:#fbf5f3; height:69px;">
+                <tr><td class="note-icon" width="55" valign="middle" bgcolor="#fbf5f3" style="background-color:#fbf5f3; width:55px; padding:0;">
                   <img src="https://www.mrghashi.com/brand/email/security-lock.png" width="26" height="30" alt="" style="display:block; border:0;">
-                </td><td class="note-copy" valign="middle" style="padding:0 0 0 20px; border-left:1px solid #cfbdb7; color:#302a33; font-size:16px; line-height:23px;">This secure link is intended for you and can be used only once. If you weren't expecting this invitation, please contact GTI Marketing Department.</td></tr>
+                </td><td class="note-copy" valign="middle" bgcolor="#fbf5f3" style="background-color:#fbf5f3; padding:0 0 0 20px; border-left:1px solid #cfbdb7; color:#302a33; font-size:16px; line-height:23px;">This secure link is intended for you and can be used only once. If you weren't expecting this invitation, please contact GTI Marketing Department.</td></tr>
               </table>
             </td></tr>
-            <tr><td height="24" style="height:24px; line-height:24px; font-size:1px;">&nbsp;</td></tr>
+            <tr><td class="paper" height="24" bgcolor="#ffffff" style="background-color:#ffffff; height:24px; line-height:24px; font-size:1px;">&nbsp;</td></tr>
           </table>
         </td></tr>
         <tr><td class="inner paper" align="center" bgcolor="#ffffff" style="padding:0 32px 22px; background-color:#ffffff; border-radius:0 0 24px 24px;">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width:100%; background-color:#ffffff; border-top:1px solid #ded3cd;">
-            <tr><td align="center" bgcolor="#ffffff" style="padding:18px 0 0; background-color:#ffffff;">
+          <table class="paper" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" style="width:100%; background-color:#ffffff; border-top:1px solid #ded3cd;">
+            <tr><td class="paper" align="center" bgcolor="#ffffff" style="padding:18px 0 0; background-color:#ffffff;">
               <img src="https://www.mrghashi.com/brand/email/gti-white.png" alt="Gulbahar Tobacco Int’l FZE" width="88" height="60" style="display:block; width:88px; height:60px; border:0; color:#29252e; font-size:12px;">
             </td></tr>
-            <tr><td align="center" bgcolor="#ffffff" style="padding:14px 0 0; background-color:#ffffff; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:20px;">
+            <tr><td class="paper" align="center" bgcolor="#ffffff" style="padding:14px 0 0; background-color:#ffffff; font-family:Arial,Helvetica,sans-serif; font-size:14px; line-height:20px;">
               <a class="site-link" href="https://www.mrghashi.com" style="color:#ae0026; text-decoration:underline;">www.mrghashi.com</a>
             </td></tr>
           </table>
