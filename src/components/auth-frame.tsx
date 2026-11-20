@@ -25,7 +25,8 @@ export function AuthFrame({ children }: { children: ReactNode }) {
             {steps.map(({ title, detail }, index) => (
               <li key={title}>
                 <span className="step-number" aria-hidden="true">{index + 1}</span>
-                <div><strong>{title}</strong><p>{detail}</p></div>
+                <strong>{title}</strong>
+                <p>{detail}</p>
               </li>
             ))}
           </ol>
